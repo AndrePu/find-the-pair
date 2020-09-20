@@ -1,0 +1,169 @@
+<html>
+	<meta charset="utf-8"/>
+    <head>
+        <title>Web application</title>
+    </head>
+    <link rel="stylesheet" href="styles.css">
+    <body>
+
+        <div id="game_setup" class="game-setup-container">
+            <div class="game-setup">
+                <h1>Игра "Найди пару"</h1>
+                <div class="name-setup setup-block">
+                    <p><b>Введите ваше имя:</b></p>
+                    <p>
+                        <input id="name" placeholder="Введите тут свое имя">
+                    </p>
+                </div>
+
+                <div class="language-setup setup-block">
+                    <p><b>Выберите язык интерфейса:</b></p>
+                    <p>
+                        <input name="language" type="radio" value="Russian"/>Русский
+                    </p>
+                    <p>
+                        <input name="language" type="radio" value="Ukrainian">Українська
+                    </p>
+                    <p>
+                        <input name="language" type="radio" value="English">English
+                    </p>
+                </div>
+
+                <div class="field-size-setup setup-block">
+                    <p><b>Выберите размерность поля:</b></p>
+                    <p>
+                        <input name="field-size" type="radio" value="3x4">3x4
+                    </p>
+                    <p>
+                        <input name="field-size" type="radio" value="4x4">4x4
+                    </p>
+                    <p>
+                        <input name="field-size" type="radio" value="5x4">5x4
+                    </p>
+                    <p>
+                        <input name="field-size" type="radio" value="6x6">6x6
+                    </p>
+                </div>
+
+                <div class="theme-setup setup-block">
+                    <p><b>Выберите тему оформления</b></p>
+                    <p>
+                        <input name="theme" type="radio" value="dark">Темная
+                    </p>
+                    <p>
+                        <input name="theme" type="radio" value="light">Светлая
+                    </p>
+                </div>
+
+                <p id="error_label" class="error-label">Ошибка</p>
+
+                <button id="start_button" class="dark-mode-button">Начать игру</button>
+            </div>       
+        </div>
+
+        <div id="game_process" class="game-process">
+            <p><b>Время</b></p>
+            <p id="stopwatch">0 сек</p>
+
+            <p><b>Количество попыток</b></p>
+            <p id="attempts">0</p>
+
+            <button id="pause_button">Пауза</button>
+        </div>
+
+        <div id="modal_window" class="modal">
+            <div class="modal-dialog">
+              <div id="modal_window_content" class="modal-content">
+                <div class="modal-header">
+                  <h3 id="modal_title" class="modal-title">Пауза</h3>
+                  <a id="modal_icon" title="Закрыть">×</a>
+                </div>
+                <div class="modal-body">
+                    <div id="modal_buttons_container">
+                        <div class="button-container container-centerizer">
+                            <button id="modal_resume_button">Продолжить</button>
+                        </div>
+                        <div class="button-container container-centerizer">
+                            <button id="modal_restart_button">Рестарт</button>
+                        </div>
+                        <div class="button-container container-centerizer">
+                            <button id="modal_options_button">Опции</button>
+                        </div>
+                        <div class="button-container container-centerizer">
+                            <button id="modal_menu_button">Меню</button>
+                        </div>
+                    </div>
+
+                    <div id="modal_options_page" style="display: none">
+                        <div class="language-setup setup-block">
+                            <p><b>Выберите язык интерфейса:</b></p>
+                            <p>
+                                <input name="modal_language" type="radio" value="Russian"/>Русский
+                            </p>
+                            <p>
+                                <input name="modal_language" type="radio" value="Ukrainian">Українська
+                            </p>
+                            <p>
+                                <input name="modal_language" type="radio" value="English">English
+                            </p>
+                          </div>
+                          <div class="theme-setup setup-block">
+                            <p><b>Выберите тему оформления</b></p>
+                            <p>
+                                <input name="modal_theme" type="radio" value="dark">Темная
+                            </p>
+                            <p>
+                                <input name="modal_theme" type="radio" value="light">Светлая
+                            </p>
+                          </div>
+                          
+                          <div class="button-container container-centerizer" style="margin-top: 30px">
+                            <button id="modal_optionsApply_button" class="dark-mode-button">Применить</button>
+                          </div>
+                    </div>
+                </div>
+              </div>
+            </div>
+        </div>
+
+        <div id="game_result" class="game-result">
+            <h1>Ваш результат</h1>
+            <p id="game_result_label">Вы набрали некое количество очков.</p>
+            <div class="button-container">
+                <button id="restart_button">Перезапустить игру</button>
+            </div>
+            <div class="button-container">
+                <button id="records_button">Таблица рекордов</button>
+            </div>
+            <div class="button-container">
+                <button id="menu_button">К началу</button>
+            </div>
+        </div>
+
+        <div id="game_record" class="game-record">
+            <div style="display: flex; justify-content: space-between;">
+                  <h1>Таблица рекордов</h1>
+                  <a id="record_return_icon" title="Вернуться">↩</a>
+                </div>
+                <div id="tab" class="tab">
+                  <button class="tablinks">3x4</button>
+                  <button class="tablinks">4x4</button>
+                  <button class="tablinks">5x4</button>
+                  <button class="tablinks">6x6</button>
+                </div>
+
+                <div class="tab-content" style="display: flex; justify-content: center;">
+                  <table id="records-table" class="table">
+                    <tr>
+                      <th>#</th>
+                      <th>Имя</th>
+                      <th>Попытки</th>
+                      <th>Время</th>
+                      <th>Счет</th>
+                    </tr>
+                  </table>
+                </div>
+        </div>
+        <script src="main.js"></script>
+      </body>
+</html>
