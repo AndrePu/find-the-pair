@@ -3,6 +3,12 @@ import * as scoreModule from '../module/score';
 import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
+import './styles.css';
+
+for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
+    import ('./assets/images/' + i.toString() + '.jpg');
+}
+
 
 const cardStyleOptions = {
     BACKGROUND_SIZE: 'cover',
@@ -49,7 +55,7 @@ const recordTabLinksPanel = {
 
         for (let i = 0; i < tabsElements.length; i++) {
             if (tabsElements[i].innerText === size) {
-                tabsElements[i].className += SPACE + this.tablinksActiveClassName[appOptions.theme];
+                tabsElements[i].className += globals.SPACE + this.tablinksActiveClassName[appOptions.theme];
             } else {
                 tabsElements[i].className = this.defaultTablinkClassName;
             }
@@ -60,7 +66,7 @@ const recordTabLinksPanel = {
 
         for (let i = 0; i < tabsElements.length; i++) {
             if (tabsElements[i].innerText === appOptions.fieldSize) {
-                tabsElements[i].className += SPACE + this.tablinksActiveClassName[appOptions.theme];
+                tabsElements[i].className += globals.SPACE + this.tablinksActiveClassName[appOptions.theme];
                 break;
             } else  {
                 tabsElements[i].className = this.defaultTablinkClassName;
@@ -542,7 +548,7 @@ function getIndexOfCheckedElement(DOMElements) {
 function getImages() {
     let images = [];
     for (let i = 1; i <= pairs_amount; i++) {
-        images.push(`images/${i}.jpg`);
+        images.push(`assets/images/${i}.jpg`);
     }
     return images;
 }
