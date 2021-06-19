@@ -4,55 +4,16 @@ import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
 import './styles.css';
-import { AppOptions, AppState, CardStyleOptions } from '../models'; 
+import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models'; 
 
 for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
     import ('./assets/images/' + i.toString() + '.jpg');
 }
 
-
-const cardStyleOptions = new CardStyleOptions();
-
 const appState = new AppState();
 const appOptions = new AppOptions();
-
-const recordTabLinksPanel = {
-    tablinksActiveClassName: {
-        dark: 'active-dark-mode',
-        light: 'active-light-mode'
-    },
-    defaultTablinkClassName: 'tablinks', 
-    onRecordTabLinkClick(size) {
-        const tabsElements = document.getElementsByClassName('tablinks');
-
-        for (let i = 0; i < tabsElements.length; i++) {
-            if (tabsElements[i].innerText === size) {
-                tabsElements[i].className += globals.SPACE + this.tablinksActiveClassName[appOptions.theme];
-            } else {
-                tabsElements[i].className = this.defaultTablinkClassName;
-            }
-        }
-    },
-    initializeRecordTableButtons() {
-        const tabsElements = document.getElementsByClassName('tablinks');
-
-        for (let i = 0; i < tabsElements.length; i++) {
-            if (tabsElements[i].innerText === appOptions.fieldSize) {
-                tabsElements[i].className += globals.SPACE + this.tablinksActiveClassName[appOptions.theme];
-                break;
-            } else  {
-                tabsElements[i].className = this.defaultTablinkClassName;
-            }
-        }
-    },
-    defaultRecordTableButtons() {
-        const tabsElements = document.getElementsByClassName('tablinks');
-
-        for (let i = 0; i < tabsElements.length; i++) {
-            tabsElements[i].className = this.defaultTablinkClassName;
-        }
-    }
-}
+const cardStyleOptions = new CardStyleOptions();
+const scoreboardPanel = new Scoreboard();
 
 let recordsTableItems = [];
 
@@ -116,7 +77,7 @@ function defineButtonsClickEvents() {
     const recordsButton = document.getElementById('records_button');
     recordsButton.onclick = () => {
         appState.goToTheFollowingState();
-        recordTabLinksPanel.initializeRecordTableButtons();
+        scoreboardPanel.initializeRecordTableButtons(apOptions);
         loadRecordsTable(JSON.parse(localStorage.getItem(appOptions.fieldSize)));
     };
 
@@ -124,13 +85,13 @@ function defineButtonsClickEvents() {
 
     const tabLinksButtons = document.getElementsByClassName('tablinks');    
     for(let i = 0; i < tabLinksButtons.length; i++) {
-        tabLinksButtons[i].onclick = () => openFieldRecords(tabLinksButtons[i].innerHTML);
+        tabLinksButtons[i].onclick = () => openFieldRecords(tabLinksButtons[i].innerHTML, appOptions);
     }
 
     const recordsReturnButton = document.getElementById('record_return_icon');
     recordsReturnButton.onclick = () => {
         clearRecordsTable();
-        recordTabLinksPanel.defaultRecordTableButtons();
+        scoreboardPanel.defaultRecordTableButtons();
         appState.goToTheFollowingState();
     }
 
@@ -310,20 +271,16 @@ function endGame() {
 function defineFieldSizes() {
     switch (appOptions.fieldSize) {
         case globals.fieldSizes.field3x4:
-            rows = 3;
-            columns = 4;
+            [rows, columns] = [3, 4];
             break;
         case globals.fieldSizes.field4x4:
-            rows = 4;
-            columns = 4;
+            [rows, columns] = [4, 4];
             break;
         case globals.fieldSizes.field5x4:
-            rows = 5;
-            columns = 4;
+            [rows, columns] = [5, 4];
             break;
         case globals.fieldSizes.field6x6:
-            rows = 6;
-            columns = 6;
+            [rows, columns] = [6, 6];
             break;
     }
     pairs_amount = rows * columns / 2;
@@ -563,9 +520,9 @@ function displayHiddenCards() {
     }
 }
 
-function openFieldRecords(size) {
+function openFieldRecords(size, appOptions) {
 
-    recordTabLinksPanel.onRecordTabLinkClick(size)
+    scoreboardPanel.onRecordTabLinkClick(size, appOptions)
     const gameRecords = JSON.parse(localStorage.getItem(size));
     clearRecordsTable();
     loadRecordsTable(gameRecords);
