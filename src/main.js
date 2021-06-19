@@ -4,20 +4,14 @@ import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
 import './styles.css';
-import { AppOptions } from '../models/app-options';
-import { AppState } from '../models/app-state';
-
+import { AppOptions, AppState, CardStyleOptions } from '../models'; 
 
 for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
     import ('./assets/images/' + i.toString() + '.jpg');
 }
 
 
-const cardStyleOptions = {
-    BACKGROUND_SIZE: 'cover',
-    BACKGROUND_POSITION: 'center center',
-    cardDefaultBackground: '#378cee'
-};
+const cardStyleOptions = new CardStyleOptions();
 
 const appState = new AppState();
 const appOptions = new AppOptions();
