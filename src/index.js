@@ -4,6 +4,9 @@ import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
 import './styles.css';
+import { AppOptions } from '../models/app-options';
+import { AppState } from '../models/app-state';
+
 
 for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
     import ('./assets/images/' + i.toString() + '.jpg');
@@ -16,33 +19,8 @@ const cardStyleOptions = {
     cardDefaultBackground: '#378cee'
 };
 
-const appState = {
-    states: {
-        GAME_SETUP: globals.GAME_SETUP,
-        GAME_PROCESS: globals.GAME_PROCESS,
-        GAME_RESULT: globals.GAME_RESULT,
-        GAME_RECORD: globals.GAME_RECORD
-    },
-    currentState: globals.GAME_SETUP,
-    followingState: {
-        [globals.GAME_SETUP]: globals.GAME_PROCESS,
-        [globals.GAME_PROCESS]: globals.GAME_RESULT,
-        [globals.GAME_RESULT]: globals.GAME_RECORD,
-        [globals.GAME_RECORD]: globals.GAME_RESULT
-    },
-    goToTheFollowingState() {
-        document.getElementById(appState.followingState[appState.currentState]).style.display = globals.DOMElementStyle.display.BLOCK;
-        document.getElementById(appState.currentState).style.display = globals.DOMElementStyle.display.NONE;
-        appState.currentState = appState.followingState[appState.currentState];
-    }
-};
-
-const appOptions = {
-    username: null,
-    interfaceLanguage: null,
-    fieldSize: null,
-    theme: null
-};
+const appState = new AppState();
+const appOptions = new AppOptions();
 
 const recordTabLinksPanel = {
     tablinksActiveClassName: {
