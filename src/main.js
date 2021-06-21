@@ -3,8 +3,11 @@ import * as scoreModule from '../module/score';
 import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
+import { getIndexOfCheckedElement } from '../module/dom-utility-functions';
 import './styles.css';
 import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models'; 
+import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation} from '../services/validation';
+import { defineFieldSizes, generateCardsNames, defineCardsInfo, getImages  } from '../module/utility-functions';
 
 for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
     import ('./assets/images/' + i.toString() + '.jpg');
@@ -15,23 +18,36 @@ const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
 const scoreboardPanel = new Scoreboard();
 
+
+const nameElement = document.getElementById('name');
+const langElements = document.getElementsByName('language');
+const fieldSizeElements = document.getElementsByName('field-size');
+const themeElements = document.getElementsByName('theme');
+const warningMessageElement = document.getElementById('error_label');
+
+const elementValidations = [
+    new EmptyInputValidation(nameElement, globals.setupFormValidationErrors.EMPTY_NAME_FIELD_ERROR),
+    new UnselectedRadioButtonValidation(langElements, globals.setupFormValidationErrors.UNCHECKED_LANGUAGE_ERROR),
+    new UnselectedRadioButtonValidation(fieldSizeElements, globals.setupFormValidationErrors.UNCHECKED_FIELDSIZE_ERROR),
+    new UnselectedRadioButtonValidation(themeElements, globals.setupFormValidationErrors.UNCHECKED_THEME_ERROR),
+];
+
+const validatorService = new ValidatorService(elementValidations);
+
 let recordsTableItems = [];
+let [rows, columns] = [null, null];
 
-let columns = null;
-let rows = null;
-let pairs_amount = 0;
+let pairs_amount = 0,
+attempts = 0;
 
-let images;
-let cards;
+ let images, cardsNames;
 
-let cardsLocked;
+let cardsInfo = {},
+currentCard = null;
 
-let cardsInfo = {};
-let currentCard = null;
-
-let gamePaused = false;
-let attempts = 0;
-let optionsPageOpened = false;
+let cardsLocked = true, 
+gamePaused = false, 
+optionsPageOpened = false;
 
 const stopwatch = new Stopwatch();
 stopwatch.registerTimeListener((time) => {
@@ -77,7 +93,7 @@ function defineButtonsClickEvents() {
     const recordsButton = document.getElementById('records_button');
     recordsButton.onclick = () => {
         appState.goToTheFollowingState();
-        scoreboardPanel.initializeRecordTableButtons(apOptions);
+        scoreboardPanel.initializeRecordTableButtons(appOptions);
         loadRecordsTable(JSON.parse(localStorage.getItem(appOptions.fieldSize)));
     };
 
@@ -133,57 +149,43 @@ function startGame() {
     if (appState.currentState === appState.states.GAME_PROCESS)
         return;
 
-    const nameElement = document.getElementById('name');
-    const langElements = document.getElementsByName('language');
-    const fieldSizeElements = document.getElementsByName('field-size');
-    const themeElements = document.getElementsByName('theme');
-    const warningMessageElement = document.getElementById('error_label');
+    if (validatorService.validate()) {
 
-    const checkedLangElementIndex = getIndexOfCheckedElement(langElements);
-    const checkedFieldSizeElementIndex = getIndexOfCheckedElement(fieldSizeElements);
-    const checkedThemeElementIndex = getIndexOfCheckedElement(themeElements);
+        const checkedLangElementIndex = getIndexOfCheckedElement(langElements);
+        const checkedFieldSizeElementIndex = getIndexOfCheckedElement(fieldSizeElements);
+        const checkedThemeElementIndex = getIndexOfCheckedElement(themeElements);
 
-    if (nameElement.value) {
-        appOptions.username = nameElement.value;
+        appOptions.assignProperties(
+            nameElement.value,
+            langElements[checkedLangElementIndex].value,
+            fieldSizeElements[checkedFieldSizeElementIndex].value,
+            themeElements[checkedThemeElementIndex].value
+        );
+        
+        appState.goToTheFollowingState();
+        initializeGameOptions();
+
+        applyAppTheme();
+        buildGameField();
+        
+        defineGameLogic();
+        runGame();
     } else {
-        warningMessageElement.innerText = globals.appSetupOptionsErrors.EMPTY_NAME_FIELD_ERROR;
+        warningMessageElement.innerText = validatorService.validationErrorMessage;
         warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-        return;
     }
+}
 
-    if (checkedLangElementIndex !== -1) {
-        appOptions.interfaceLanguage = langElements[checkedLangElementIndex].value;
-    } else {
-        warningMessageElement.innerText = globals.appSetupOptionsErrors.UNCHECKED_LANGUAGE_ERROR;
-        warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-        return;
-    }
+function initializeGameOptions() {
+    [rows, columns] = defineFieldSizes(appOptions.fieldSize);
+    pairs_amount = rows * columns / 2;
+    images = getImages(pairs_amount);
+    cardsNames = generateCardsNames(rows, columns);
+    cardsInfo = defineCardsInfo(
+        pipes.arrRandomizerPipe.transform(cardsNames), 
+        images
+    );
 
-    if (checkedFieldSizeElementIndex !== -1) {
-        appOptions.fieldSize = fieldSizeElements[checkedFieldSizeElementIndex].value;
-    } else {
-        warningMessageElement.innerText = globals.appSetupOptionsErrors.UNCHECKED_FIELDSIZE_ERROR;
-        warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-        return;
-    }
-    if (checkedThemeElementIndex !== -1) {
-        appOptions.theme = themeElements[checkedThemeElementIndex].value;
-    } else {
-        warningMessageElement.innerText = globals.appSetupOptionsErrors.UNCHECKED_THEME_ERROR;
-        warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-        return;
-    }
-    appState.goToTheFollowingState();
-
-
-    defineFieldSizes();
-    images = getImages();
-    cards = pipes.arrRandomizerPipe.transform(generateCardsNames(rows, columns));
-    buildGameField();
-    applyAppTheme();
-    defineCardsInfo()    
-    defineGameLogic();
-    runGame();
 }
 
 function pauseGame() {
@@ -211,8 +213,11 @@ function restartGame() {
     resumeGame();
     stopwatch.pause();
     clearGameParameters();
-    cards = pipes.arrRandomizerPipe.transform(cards);
-    defineCardsInfo();
+    cardsNames = pipes.arrRandomizerPipe.transform(cardsNames);
+    cardsInfo = defineCardsInfo(
+        pipes.arrRandomizerPipe.transform(cardsNames), 
+        images
+    );
     defineGameLogic();
     runGame();
 }
@@ -268,35 +273,6 @@ function endGame() {
     appState.goToTheFollowingState();
 }
 
-function defineFieldSizes() {
-    switch (appOptions.fieldSize) {
-        case globals.fieldSizes.field3x4:
-            [rows, columns] = [3, 4];
-            break;
-        case globals.fieldSizes.field4x4:
-            [rows, columns] = [4, 4];
-            break;
-        case globals.fieldSizes.field5x4:
-            [rows, columns] = [5, 4];
-            break;
-        case globals.fieldSizes.field6x6:
-            [rows, columns] = [6, 6];
-            break;
-    }
-    pairs_amount = rows * columns / 2;
-}
-
-function generateCardsNames(rows, columns) {
-    let cards = [];
-
-    for (let i = 1; i <= rows; i++) {
-        for (let j = 1; j <= columns; j++) {
-            cards.push(`card${i}${j}`);
-        }
-    }
-    return cards;
-}
-
 function buildGameField() {
     const gameProcessBlock = document.getElementById(appState.states.GAME_PROCESS);
     for (let i = 1; i <= rows; i++) {
@@ -306,69 +282,85 @@ function buildGameField() {
             let card = document.createElement('div');
             card.className = 'card';
             card.id = `card${i}${j}`;
+            card.style.background = cardStyleOptions.cardDefaultBackground
             rowBlock.append(card);
         }
     }
 }
 
 function applyAppTheme() {
+    const buttonNames = [
+        'pause_button',
+        'modal_resume_button',
+        'modal_restart_button',
+        'modal_options_button',
+        'modal_menu_button',
+        'modal_optionsApply_button',
+        'restart_button',
+        'records_button',
+        'menu_button'
+    ];
+
+    const modalWindows = [
+        'modal_window_content'
+    ];
+
+    const icons = [
+        'modal_icon',
+        'record_return_icon'
+    ];
+
     document.body.style.color = globals.appTheme[appOptions.theme].color;
     document.body.style.background = globals.appTheme[appOptions.theme].background;
     cardStyleOptions.cardDefaultBackground = globals.appTheme[appOptions.theme].cardDefaultBackground;
-    document.getElementById('pause_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('modal_window_content').className = globals.appTheme[appOptions.theme].modalWindowContentClassName;
-    document.getElementById('modal_icon').className = globals.appTheme[appOptions.theme].iconClassName;
-    document.getElementById('modal_resume_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('modal_restart_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('modal_options_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('modal_menu_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('modal_optionsApply_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('restart_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('records_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('menu_button').className = globals.appTheme[appOptions.theme].buttonClassName;
-    document.getElementById('record_return_icon').className = globals.appTheme[appOptions.theme].iconClassName;
 
-    for (let i = 0; i < cards.length; i++) {
-        document.getElementById(cards[i]).style.background = cardStyleOptions.cardDefaultBackground;
+    for (let buttonName of buttonNames) {
+        document.getElementById(buttonName).className = globals.appTheme[appOptions.theme].buttonClassName;
+    }
+
+    for (let modalWindow of modalWindows) {
+        document.getElementById(modalWindow).className = globals.appTheme[appOptions.theme].modalWindowContentClassName;
+    }
+
+    for (let icon of icons) {
+        document.getElementById(icon).className = globals.appTheme[appOptions.theme].iconClassName;
     }
 }
 
-function defineCardsInfo() {
-    for (let i = 0; i < cards.length; i++) {
-        cardsInfo[cards[i]] = {
-            visible: true,
-            chosen: false,
-            chosenColor: pipes.imagePipe.transform(images[i % (cards.length/2)]),
-            pair: cards[(i + (cards.length/2)) % cards.length]
-        };
+function changeThemeForCards() {
+    for (let i = 0; i < cardsNames.length; i++) {
+        const cardElement = document.getElementById(cardsNames[i]);
+        if (cardElement) {
+            cardElement.style.background = cardStyleOptions.cardDefaultBackground;
+        }
     }
 }
 
 function defineGameLogic() {
 
-    for (let i = 0; i < cards.length; i++) {
-        let element = document.getElementById(cards[i]);
+    for (let i = 0; i < cardsNames.length; i++) {
+        let element = document.getElementById(cardsNames[i]);
         element.onclick = function() {
-            if (cardsLocked || cards[i] == currentCard) {
+            if (cardsLocked || cardsNames[i] == currentCard) {
                 return;
             }
             attempts++;
             document.getElementById('attempts').innerHTML = attempts;
 
-            let pairedCard = cardsInfo[cards[i]].pair;
+            let pairedCard = cardsInfo[cardsNames[i]].pair;
             let pairedElement = document.getElementById(pairedCard);
             if (cardsInfo[pairedCard].chosen) {
                 element.style.visibility = globals.DOMElementStyle.visibility.HIDDEN;
                 pairedElement.style.visibility = globals.DOMElementStyle.visibility.HIDDEN;
 
-                cardsInfo[cards[i]].visible = false;
+                cardsInfo[cardsNames[i]].visible = false;
                 cardsInfo[pairedCard].visible = false;
                 currentCard = null;
 
                 let gameFinished = true;
 
-                for (let i = 0; i < cards.length; i++) {
-                    if (cardsInfo[cards[i]].visible) {
+                for (let i = 0; i < cardsNames.length; i++) {
+                    if (cardsInfo[cardsNames[i]].visible) {
                         gameFinished = false;
                         break;
                     }
@@ -377,7 +369,7 @@ function defineGameLogic() {
                     endGame();
                 }
             } else {
-                element.style.backgroundImage = cardsInfo[cards[i]].chosenColor;
+                element.style.backgroundImage = cardsInfo[cardsNames[i]].chosenColor;
                 element.style.backgroundSize = cardStyleOptions.BACKGROUND_SIZE;
                 element.style.backgroundPosition = cardStyleOptions.BACKGROUND_POSITION;
         
@@ -391,8 +383,8 @@ function defineGameLogic() {
                         cardsLocked = false;
                     }, 1000)
                 } else {
-                    cardsInfo[cards[i]].chosen = true;
-                    currentCard = cards[i];
+                    cardsInfo[cardsNames[i]].chosen = true;
+                    currentCard = cardsNames[i];
                 }
             }
         }
@@ -430,6 +422,7 @@ function applyOptionsFromModalWindow() {
     const checkedThemeElementIndex = getIndexOfCheckedElement(modalThemeElements);
     appOptions.theme = modalThemeElements[checkedThemeElementIndex].value;
     applyAppTheme();
+    changeThemeForCards();
 }
 
 function openModalOptionsPage() {
@@ -463,39 +456,18 @@ function openModalOptionsPage() {
     })
 }
 
-function getIndexOfCheckedElement(DOMElements) {
-    let res = -1;
-    for (let i = 0; i < DOMElements.length; i++) {
-        if (DOMElements[i].checked) {
-            res = i;
-            break;
-        }
-    }
-    return res;
-}
-
-function getImages() {
-    let images = [];
-    for (let i = 1; i <= pairs_amount; i++) {
-        images.push(`assets/images/${i}.jpg`);
-    }
-    return images;
-}
-
-
 function showCards() {
-    for (let i = 0; i < cards.length; i++) {
-        let element = document.getElementById(cards[i]);
-        element.style.backgroundImage = cardsInfo[cards[i]].chosenColor;
+    for (let i = 0; i < cardsNames.length; i++) {
+        let element = document.getElementById(cardsNames[i]);
+        element.style.backgroundImage = cardsInfo[cardsNames[i]].chosenColor;
         element.style.backgroundSize = cardStyleOptions.BACKGROUND_SIZE;
         element.style.backgroundPosition = cardStyleOptions.BACKGROUND_POSITION;
-
     }
 }
 
 function hideCards() {
-    for (let i = 0; i < cards.length; i++) {
-        let element = document.getElementById(cards[i]);
+    for (let i = 0; i < cardsNames.length; i++) {
+        let element = document.getElementById(cardsNames[i]);
         element.style.background = cardStyleOptions.cardDefaultBackground;
     }
 }
@@ -512,9 +484,9 @@ function clearGameParameters() {
 }
 
 function displayHiddenCards() {
-    for (let i = 0; i < cards.length; i++) {
-        if (!cardsInfo[cards[i]].visible) {
-            const cardElement = document.getElementById(cards[i]);
+    for (let i = 0; i < cardsNames.length; i++) {
+        if (!cardsInfo[cardsNames[i]].visible) {
+            const cardElement = document.getElementById(cardsNames[i]);
             cardElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
         }
     }

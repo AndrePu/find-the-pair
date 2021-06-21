@@ -36,7 +36,7 @@ export const fieldSizes = {
     field6x6: '6x6'
 }
 
-export const appSetupOptionsErrors = {
+export const setupFormValidationErrors = {
     EMPTY_NAME_FIELD_ERROR: 'Укажите, пожалуйста, свое имя',
     UNCHECKED_LANGUAGE_ERROR: 'Выберите язык интерфейса для дальнейшей работы',
     UNCHECKED_FIELDSIZE_ERROR: 'Следует указать размерность поля, чтобы начать игру',

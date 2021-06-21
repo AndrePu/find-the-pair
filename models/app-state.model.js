@@ -3,12 +3,12 @@ import * as globals from '../module/globals';
 export class AppState {
 
     constructor() {
-        this.states =  {
+        this.states = {
             GAME_SETUP: globals.GAME_SETUP,
             GAME_PROCESS: globals.GAME_PROCESS,
             GAME_RESULT: globals.GAME_RESULT,
             GAME_RECORD: globals.GAME_RECORD
-        };    
+        };
         
         this.currentState = globals.GAME_SETUP;
     
