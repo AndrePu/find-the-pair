@@ -1,38 +1,54 @@
 'use strict';
+import './styles.css';
+for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
+    import ('./assets/images/' + i.toString() + '.jpg');
+}
+
 import * as scoreModule from '../module/score';
 import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
 import { getIndexOfCheckedElement } from '../module/dom-utility-functions';
-import './styles.css';
-import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models'; 
-import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation} from '../services/validation';
+import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models';
 import { defineFieldSizes, generateCardsNames, defineCardsInfo, getImages  } from '../module/utility-functions';
+import { SetupView } from '../module/components/setup-form/setup.view';
+import { SetupController } from '../module/components/setup-form/setup.controller';
+import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
+import { AppThemeService } from '../services/app-theme.service';
 
-for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
-    import ('./assets/images/' + i.toString() + '.jpg');
-}
 
 const appState = new AppState();
 const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
 const scoreboardPanel = new Scoreboard();
 
-
-const nameElement = document.getElementById('name');
-const langElements = document.getElementsByName('language');
-const fieldSizeElements = document.getElementsByName('field-size');
-const themeElements = document.getElementsByName('theme');
-const warningMessageElement = document.getElementById('error_label');
-
-const elementValidations = [
-    new EmptyInputValidation(nameElement, globals.setupFormValidationErrors.EMPTY_NAME_FIELD_ERROR),
-    new UnselectedRadioButtonValidation(langElements, globals.setupFormValidationErrors.UNCHECKED_LANGUAGE_ERROR),
-    new UnselectedRadioButtonValidation(fieldSizeElements, globals.setupFormValidationErrors.UNCHECKED_FIELDSIZE_ERROR),
-    new UnselectedRadioButtonValidation(themeElements, globals.setupFormValidationErrors.UNCHECKED_THEME_ERROR),
-];
-
-const validatorService = new ValidatorService(elementValidations);
+const setupController = new SetupController(
+    new SetupViewModel(), 
+    new SetupView(appOptionsSetEvent.bind(this))
+);
+setupController.initialize();
+const appThemeService = new AppThemeService(
+    appOptions,
+    cardStyleOptions,
+    [
+        'pause_button',
+        'modal_resume_button',
+        'modal_restart_button',
+        'modal_options_button',
+        'modal_menu_button',
+        'modal_optionsApply_button',
+        'restart_button',
+        'records_button',
+        'menu_button'
+    ],
+    [
+        'modal_window_content'
+    ],
+    [
+        'modal_icon',
+        'record_return_icon'
+    ]
+);
 
 let recordsTableItems = [];
 let [rows, columns] = [null, null];
@@ -45,7 +61,7 @@ attempts = 0;
 let cardsInfo = {},
 currentCard = null;
 
-let cardsLocked = true, 
+let cardsLocked = true,
 gamePaused = false, 
 optionsPageOpened = false;
 
@@ -58,8 +74,6 @@ defineButtonsClickEvents();
 enableHotkeys();
 
 function defineButtonsClickEvents() {
-    const startButton = document.getElementById('start_button');
-    startButton.onclick = startGame;
 
     const pauseButton = document.getElementById('pause_button');
     pauseButton.onclick = pauseGame;
@@ -121,9 +135,9 @@ function enableHotkeys() {
         switch (event.key) {
             case globals.keys.ENTER:
                 switch (appState.currentState) {
-                    case appState.states.GAME_SETUP:
-                        startGame();
-                        break;
+                    // case appState.states.GAME_SETUP:
+                    //     setupView.startGame();
+                    //     break;
                     case appState.states.GAME_RESULT:
                         location.reload();
                         break;
@@ -144,48 +158,52 @@ function enableHotkeys() {
     }
 }
 
+// method-mediator 
+function appOptionsSetEvent() {
 
-function startGame() {
-    if (appState.currentState === appState.states.GAME_PROCESS)
-        return;
+    appOptions.assignProperties(
+        setupController.setupViewModel.username,
+        setupController.setupViewModel.interfaceLanguage,
+        setupController.setupViewModel.fieldSize,
+        setupController.setupViewModel.theme,
+    );
 
-    if (validatorService.validate()) {
-
-        const checkedLangElementIndex = getIndexOfCheckedElement(langElements);
-        const checkedFieldSizeElementIndex = getIndexOfCheckedElement(fieldSizeElements);
-        const checkedThemeElementIndex = getIndexOfCheckedElement(themeElements);
-
-        appOptions.assignProperties(
-            nameElement.value,
-            langElements[checkedLangElementIndex].value,
-            fieldSizeElements[checkedFieldSizeElementIndex].value,
-            themeElements[checkedThemeElementIndex].value
-        );
-        
-        appState.goToTheFollowingState();
-        initializeGameOptions();
-
-        applyAppTheme();
-        buildGameField();
-        
-        defineGameLogic();
-        runGame();
-    } else {
-        warningMessageElement.innerText = validatorService.validationErrorMessage;
-        warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-    }
+    appThemeService.applyAppTheme();
+    appState.goToTheFollowingState();
+    initializeBaseGameData();
+    buildGameField();
+    startGame();
 }
 
-function initializeGameOptions() {
+function initializeBaseGameData() {
     [rows, columns] = defineFieldSizes(appOptions.fieldSize);
     pairs_amount = rows * columns / 2;
     images = getImages(pairs_amount);
     cardsNames = generateCardsNames(rows, columns);
+}
+
+function buildGameField() {
+    const gameProcessBlock = document.getElementById(appState.states.GAME_PROCESS);
+    for (let i = 1; i <= rows; i++) {
+        let rowBlock = document.createElement('div');
+        gameProcessBlock.prepend(rowBlock);
+        for (let j = 1; j <= columns; j++) {
+            let card = document.createElement('div');
+            card.className = 'card';
+            card.id = `card${i}${j}`;
+            card.style.background = cardStyleOptions.cardDefaultBackground
+            rowBlock.append(card);
+        }
+    }
+}
+
+function startGame() {
     cardsInfo = defineCardsInfo(
         pipes.arrRandomizerPipe.transform(cardsNames), 
         images
     );
-
+    defineGameLogic();
+    runGame();
 }
 
 function pauseGame() {
@@ -213,13 +231,7 @@ function restartGame() {
     resumeGame();
     stopwatch.pause();
     clearGameParameters();
-    cardsNames = pipes.arrRandomizerPipe.transform(cardsNames);
-    cardsInfo = defineCardsInfo(
-        pipes.arrRandomizerPipe.transform(cardsNames), 
-        images
-    );
-    defineGameLogic();
-    runGame();
+    startGame();
 }
 
 function endGame() {
@@ -271,60 +283,6 @@ function endGame() {
     document.getElementById('game_result_label').innerText = displayInfo;
 
     appState.goToTheFollowingState();
-}
-
-function buildGameField() {
-    const gameProcessBlock = document.getElementById(appState.states.GAME_PROCESS);
-    for (let i = 1; i <= rows; i++) {
-        let rowBlock = document.createElement('div');
-        gameProcessBlock.prepend(rowBlock);
-        for (let j = 1; j <= columns; j++) {
-            let card = document.createElement('div');
-            card.className = 'card';
-            card.id = `card${i}${j}`;
-            card.style.background = cardStyleOptions.cardDefaultBackground
-            rowBlock.append(card);
-        }
-    }
-}
-
-function applyAppTheme() {
-    const buttonNames = [
-        'pause_button',
-        'modal_resume_button',
-        'modal_restart_button',
-        'modal_options_button',
-        'modal_menu_button',
-        'modal_optionsApply_button',
-        'restart_button',
-        'records_button',
-        'menu_button'
-    ];
-
-    const modalWindows = [
-        'modal_window_content'
-    ];
-
-    const icons = [
-        'modal_icon',
-        'record_return_icon'
-    ];
-
-    document.body.style.color = globals.appTheme[appOptions.theme].color;
-    document.body.style.background = globals.appTheme[appOptions.theme].background;
-    cardStyleOptions.cardDefaultBackground = globals.appTheme[appOptions.theme].cardDefaultBackground;
-
-    for (let buttonName of buttonNames) {
-        document.getElementById(buttonName).className = globals.appTheme[appOptions.theme].buttonClassName;
-    }
-
-    for (let modalWindow of modalWindows) {
-        document.getElementById(modalWindow).className = globals.appTheme[appOptions.theme].modalWindowContentClassName;
-    }
-
-    for (let icon of icons) {
-        document.getElementById(icon).className = globals.appTheme[appOptions.theme].iconClassName;
-    }
 }
 
 function changeThemeForCards() {
@@ -421,7 +379,7 @@ function applyOptionsFromModalWindow() {
     const modalThemeElements = document.getElementsByName('modal_theme');
     const checkedThemeElementIndex = getIndexOfCheckedElement(modalThemeElements);
     appOptions.theme = modalThemeElements[checkedThemeElementIndex].value;
-    applyAppTheme();
+    appThemeService.applyAppTheme();
     changeThemeForCards();
 }
 
