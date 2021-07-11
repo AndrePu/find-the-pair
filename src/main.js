@@ -8,13 +8,14 @@ import * as scoreModule from '../module/score';
 import * as pipes from '../module/pipes';
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
-import { getIndexOfCheckedElement } from '../module/dom-utility-functions';
 import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models';
 import { defineFieldSizes, generateCardsNames, defineCardsInfo, getImages  } from '../module/utility-functions';
 import { SetupView } from '../module/components/setup-form/setup.view';
 import { SetupController } from '../module/components/setup-form/setup.controller';
 import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
 import { AppThemeService } from '../services/app-theme.service';
+import { GameResultView } from '../module/components/game-result/game-result.view';
+import { GamePausePopupDialogView } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.view';
 
 
 const appState = new AppState();
@@ -22,9 +23,17 @@ const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
 const scoreboardPanel = new Scoreboard();
 
+const gameResultView = new GameResultView(
+    onRestartButtonFromResultPageClick,
+    onRecordsButtonClick,
+    onMenuButtonClick
+);
+
+gameResultView.render();
+
 const setupController = new SetupController(
     new SetupViewModel(), 
-    new SetupView(appOptionsSetEvent.bind(this))
+    new SetupView(setupFormToGameProcessMediator.bind(this))
 );
 setupController.initialize();
 const appThemeService = new AppThemeService(
@@ -50,6 +59,8 @@ const appThemeService = new AppThemeService(
     ]
 );
 
+let gamePausePopupDialogView = new GamePausePopupDialogView(cardStyleOptions, appThemeService, appOptions);
+
 let recordsTableItems = [];
 let [rows, columns] = [null, null];
 
@@ -61,9 +72,9 @@ attempts = 0;
 let cardsInfo = {},
 currentCard = null;
 
-let cardsLocked = true,
-gamePaused = false, 
-optionsPageOpened = false;
+let cardsLocked = true;
+// gamePaused = false; 
+// optionsPageOpened = false;
 
 const stopwatch = new Stopwatch();
 stopwatch.registerTimeListener((time) => {
@@ -77,41 +88,6 @@ function defineButtonsClickEvents() {
 
     const pauseButton = document.getElementById('pause_button');
     pauseButton.onclick = pauseGame;
- 
-    const modalRestartButton = document.getElementById('modal_restart_button');
-    modalRestartButton.onclick = restartGame;
-
-    const modalResumeButton = document.getElementById('modal_resume_button');
-    modalResumeButton.onclick = resumeGame;
-
-    const modalIcon = document.getElementById('modal_icon');
-    modalIcon.onclick = () => optionsPageOpened ? returnToMainModalScreen() : resumeGame();
-
-    const modalMenuButton = document.getElementById('modal_menu_button');
-    modalMenuButton.onclick = () => location.reload();
-
-    const modalOptionsButton = document.getElementById('modal_options_button');
-    modalOptionsButton.onclick = openModalOptionsPage;
-
-    const modalOptionsApplyButton = document.getElementById('modal_optionsApply_button');
-    modalOptionsApplyButton.onclick = applyOptionsFromModalWindow;
-
-    const restartButton = document.getElementById('restart_button');
-    restartButton.onclick = () => {
-        appState.currentState = appState.states.GAME_PROCESS;
-        document.getElementById(appState.states.GAME_RESULT).style.display = globals.DOMElementStyle.display.NONE;
-        document.getElementById(appState.states.GAME_PROCESS).style.display = globals.DOMElementStyle.display.BLOCK;
-        restartGame();
-    };
-
-    const recordsButton = document.getElementById('records_button');
-    recordsButton.onclick = () => {
-        appState.goToTheFollowingState();
-        scoreboardPanel.initializeRecordTableButtons(appOptions);
-        loadRecordsTable(JSON.parse(localStorage.getItem(appOptions.fieldSize)));
-    };
-
-
 
     const tabLinksButtons = document.getElementsByClassName('tablinks');    
     for(let i = 0; i < tabLinksButtons.length; i++) {
@@ -124,9 +100,24 @@ function defineButtonsClickEvents() {
         scoreboardPanel.defaultRecordTableButtons();
         appState.goToTheFollowingState();
     }
+}
 
-    const menuButton = document.getElementById('menu_button');
-    menuButton.onclick = () => location.reload();
+
+function onRestartButtonFromResultPageClick() {    
+    appState.currentState = appState.states.GAME_PROCESS;
+    document.getElementById(appState.states.GAME_RESULT).style.display = globals.DOMElementStyle.display.NONE;
+    document.getElementById(appState.states.GAME_PROCESS).style.display = globals.DOMElementStyle.display.BLOCK;
+    restartGame();
+}
+
+function onRecordsButtonClick() {    
+    appState.goToTheFollowingState();
+    scoreboardPanel.initializeRecordTableButtons(appOptions);
+    loadRecordsTable(JSON.parse(localStorage.getItem(appOptions.fieldSize)));
+}
+
+function onMenuButtonClick() {
+    location.reload();
 }
 
 function enableHotkeys() {
@@ -145,9 +136,9 @@ function enableHotkeys() {
                 break;
             case globals.keys.ESCAPE:
                 switch(appState.currentState) {
-                    case appState.states.GAME_PROCESS:
-                        !gamePaused ? pauseGame() : optionsPageOpened ? returnToMainModalScreen() : resumeGame();
-                        break;
+                    // case appState.states.GAME_PROCESS:
+                    //     !gamePaused ? pauseGame() : optionsPageOpened ? returnToMainModalScreen() : resumeGame();
+                    //     break;
                     case appState.states.GAME_RECORD:
                         clearRecordsTable();
                         appState.goToTheFollowingState();
@@ -159,7 +150,7 @@ function enableHotkeys() {
 }
 
 // method-mediator 
-function appOptionsSetEvent() {
+function setupFormToGameProcessMediator() {
 
     appOptions.assignProperties(
         setupController.setupViewModel.username,
@@ -171,9 +162,19 @@ function appOptionsSetEvent() {
     appThemeService.applyAppTheme();
     appState.goToTheFollowingState();
     initializeBaseGameData();
+
+    // TODO: get rid of these methods
+    gamePausePopupDialogView.setCardsNames(cardsNames); 
+    gamePausePopupDialogView.setRestartGameFunction(restartGame.bind(this));
+    gamePausePopupDialogView.setResumeGameFunction(resumeGame.bind(this));
+    gamePausePopupDialogView.render();
+
     buildGameField();
     startGame();
 }
+
+
+// GAME PROCESS COMPONENT (START)
 
 function initializeBaseGameData() {
     [rows, columns] = defineFieldSizes(appOptions.fieldSize);
@@ -210,26 +211,19 @@ function pauseGame() {
     if (!stopwatch.isLaunched())
         return;
     
-    document.body.style.overflow = globals.DOMElementStyle.overflow.HIDDEN;
-    const modalWindow = document.getElementById('modal_window');
-    modalWindow.style.pointerEvents = 'auto';
-    modalWindow.style.opacity = 1;
     stopwatch.pause();
-    gamePaused = true;
+    // gamePaused = true;
+    gamePausePopupDialogView.showModalWindow();
 }
 
 function resumeGame() {
-    document.body.style.overflow = globals.DOMElementStyle.overflow.AUTO;
-    const modalWindow = document.getElementById('modal_window');
-    modalWindow.style.pointerEvents = 'none';
-    modalWindow.style.opacity = 0;
+    gamePausePopupDialogView.hideModalWindow();
     stopwatch.run();
-    gamePaused = false;
+    // gamePaused = false;
 }
 
 function restartGame() {
-    resumeGame();
-    stopwatch.pause();
+    gamePausePopupDialogView.hideModalWindow();
     clearGameParameters();
     startGame();
 }
@@ -278,20 +272,8 @@ function endGame() {
 
     maxScore = fieldRecords.maxScore.score;
     localStorage.setItem(appOptions.fieldSize, JSON.stringify(fieldRecords));
-    
     const displayInfo = scoreModule.getScoreInfoToDisplay(gotRecord, score, maxScore, oldScore);
-    document.getElementById('game_result_label').innerText = displayInfo;
-
-    appState.goToTheFollowingState();
-}
-
-function changeThemeForCards() {
-    for (let i = 0; i < cardsNames.length; i++) {
-        const cardElement = document.getElementById(cardsNames[i]);
-        if (cardElement) {
-            cardElement.style.background = cardStyleOptions.cardDefaultBackground;
-        }
-    }
+    gameProcessToGameResultMediator(displayInfo);
 }
 
 function defineGameLogic() {
@@ -358,65 +340,10 @@ function runGame() {
     }, 5000);
 }
 
-
-function returnToMainModalScreen() {
-    const modalIcon = document.getElementById('modal_icon');
-    modalIcon.title = 'Закрыть';
-    modalIcon.innerText = '×';
-
-    const modalTitle = document.getElementById('modal_title');
-    modalTitle.innerText = 'Опции';
-    optionsPageOpened = false;
-
-    const modalOptionsPage = document.getElementById('modal_options_page');
-    modalOptionsPage.style.display = globals.DOMElementStyle.display.NONE;
-
-    const modalButtonsContainer = document.getElementById('modal_buttons_container');
-    modalButtonsContainer.style.display = globals.DOMElementStyle.display.BLOCK;
-}
-
-function applyOptionsFromModalWindow() {
-    const modalThemeElements = document.getElementsByName('modal_theme');
-    const checkedThemeElementIndex = getIndexOfCheckedElement(modalThemeElements);
-    appOptions.theme = modalThemeElements[checkedThemeElementIndex].value;
-    appThemeService.applyAppTheme();
-    changeThemeForCards();
-}
-
-function openModalOptionsPage() {
-    optionsPageOpened = true;
-
-    const modalButtonsContainer = document.getElementById('modal_buttons_container');
-    modalButtonsContainer.style.display = globals.DOMElementStyle.display.NONE;
-
-    const modalOptionsPage = document.getElementById('modal_options_page');
-    modalOptionsPage.style.display = globals.DOMElementStyle.display.BLOCK;
-    
-    const modalIcon = document.getElementById('modal_icon');
-    modalIcon.title = 'Назад';
-    modalIcon.innerText = '↩';
-
-    const modalTitle = document.getElementById('modal_title');
-    modalTitle.innerText = 'Опции';
-
-    const modalThemeElements = document.getElementsByName('modal_theme');
-    modalThemeElements.forEach((themeElement) => {
-        if (themeElement.value === appOptions.theme) {
-            themeElement.checked = true;
-        }
-    })
-
-    const modalLangElements = document.getElementsByName('modal_language');
-    modalLangElements.forEach((langElement) => {
-        if (langElement.value === appOptions.interfaceLanguage) {
-            langElement.checked = true;
-        }
-    })
-}
-
 function showCards() {
     for (let i = 0; i < cardsNames.length; i++) {
         let element = document.getElementById(cardsNames[i]);
+        element.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
         element.style.backgroundImage = cardsInfo[cardsNames[i]].chosenColor;
         element.style.backgroundSize = cardStyleOptions.BACKGROUND_SIZE;
         element.style.backgroundPosition = cardStyleOptions.BACKGROUND_POSITION;
@@ -433,22 +360,22 @@ function hideCards() {
 function clearGameParameters() {
     currentCard = null;
     cardsLocked = true;
+    // gamePaused = false;
     stopwatch.reset();
     attempts = 0;
-    const attemptsLabel = document.getElementById('attempts');
-
-    attemptsLabel.innerHTML = attempts;
-    displayHiddenCards();
+    document.getElementById('attempts').innerHTML = attempts;
 }
 
-function displayHiddenCards() {
-    for (let i = 0; i < cardsNames.length; i++) {
-        if (!cardsInfo[cardsNames[i]].visible) {
-            const cardElement = document.getElementById(cardsNames[i]);
-            cardElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-        }
-    }
+// GAME PROCESS COMPONENT (END)
+
+
+function gameProcessToGameResultMediator(displayInfo) {
+    document.getElementById('game_result_label').innerText = displayInfo;
+    appState.goToTheFollowingState();
+
 }
+
+// SCOREBOARD COMPONENT (START)
 
 function openFieldRecords(size, appOptions) {
 
@@ -471,14 +398,14 @@ function loadRecordsTable(gameRecords) {
     }
 
     const recordsTable = document.getElementById('records-table');
-    createTableRecord(gameRecords.maxScore, 1, recordsTable);
+    createTableRecord(gameRecords.maxScore, 1, recordsTable, recordsTableItems);
 
     for (let i = 0; i < gameRecords.scores.length; i++) {
-      createTableRecord(gameRecords.scores[i], i+2, recordsTable);
+      createTableRecord(gameRecords.scores[i], i+2, recordsTable, recordsTableItems);
     }
 }
 
-function createTableRecord(record, index, recordsTable) {
+function createTableRecord(record, index, recordsTable, recordsTableItems) {
     let domRecord = document.createElement('tr');
     domRecord.id = `${record.name}${index}`;
     domRecord.innerHTML = 
@@ -491,3 +418,4 @@ function createTableRecord(record, index, recordsTable) {
     recordsTable.append(domRecord);
     recordsTableItems.push(domRecord.id);
 }
+// SCOREBOARD COMPONENT (END)
