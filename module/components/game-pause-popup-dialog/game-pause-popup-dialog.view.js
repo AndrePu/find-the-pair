@@ -2,12 +2,13 @@ import { getIndexOfCheckedElement } from "../../dom-utility-functions";
 import * as globals from '../../globals';
 
 export class GamePausePopupDialogView {
-    constructor(cardStyleOptions, appThemeService, appOptions) {
+    constructor(cardStyleOptions, appThemeService, appOptions, onMenuButtonClick) {
         this.cardStyleOptions = cardStyleOptions;
         this.appThemeService = appThemeService;
         this.appOptions = appOptions;
         this.optionsPageOpened = false;
         this.onRestartBtnClick = null;
+        this.onMenuButtonClick = onMenuButtonClick;
     }
 
     render() {        
@@ -21,7 +22,7 @@ export class GamePausePopupDialogView {
         modalIcon.onclick = () => this.optionsPageOpened ? this.returnToMainModalScreen() : this.restartGame();
 
         const modalMenuButton = document.getElementById('modal_menu_button');
-        modalMenuButton.onclick = () => location.reload();
+        modalMenuButton.onclick = this.onMenuButtonClick;
 
         const modalOptionsButton = document.getElementById('modal_options_button');
         modalOptionsButton.onclick = this.openModalOptionsPage.bind(this);
