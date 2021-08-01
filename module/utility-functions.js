@@ -56,3 +56,7 @@ export function getImages(imagesAmount) {
     }
     return images;
 }
+
+export function onMenuButtonClick() {
+    location.reload();
+}

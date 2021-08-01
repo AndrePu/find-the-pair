@@ -14,12 +14,12 @@ import { AppThemeService } from '../services/app-theme.service';
 import { GameResultView } from '../module/components/game-result/game-result.view';
 import { GamePausePopupDialogView } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.view';
 import { GameProcessView } from '../module/components/game-process/game-process.view';
-
+import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
+import { onMenuButtonClick } from '../module/utility-functions';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
-const scoreboardPanel = new Scoreboard();
 
 const stopwatch = new Stopwatch();
 stopwatch.registerTimeListener((time) => {
@@ -49,13 +49,6 @@ const appThemeService = new AppThemeService(
     ]
 );
 
-const gameResultView = new GameResultView(
-    gameResultToGameProcessMediator,
-    onRecordsButtonClick,
-    onMenuButtonClick
-);
-gameResultView.render();
-
 const setupController = new SetupController(
     new SetupViewModel(), 
     new SetupView(setupFormToGameProcessMediator.bind(this))
@@ -78,65 +71,15 @@ const gameProcessView = new GameProcessView(
     gameProcessToGameResultMediator.bind(this)
 );
 
-let recordsTableItems = [];
+const gameResultView = new GameResultView(
+    gameResultToGameProcessMediator,
+    gameResultToGameRecordMediator,
+    onMenuButtonClick
+);
+gameResultView.render();
 
-defineButtonsClickEvents();
-enableHotkeys();
-
-function defineButtonsClickEvents() {
-
-    const tabLinksButtons = document.getElementsByClassName('tablinks');    
-    for(let i = 0; i < tabLinksButtons.length; i++) {
-        tabLinksButtons[i].onclick = () => openFieldRecords(tabLinksButtons[i].innerHTML, appOptions);
-    }
-
-    const recordsReturnButton = document.getElementById('record_return_icon');
-    recordsReturnButton.onclick = () => {
-        clearRecordsTable();
-        scoreboardPanel.defaultRecordTableButtons();
-        appState.goToTheFollowingState();
-    }
-}
-
-
-function onRecordsButtonClick() {    
-    appState.goToTheFollowingState();
-    scoreboardPanel.initializeRecordTableButtons(appOptions);
-    loadRecordsTable(JSON.parse(localStorage.getItem(appOptions.fieldSize)));
-}
-
-function onMenuButtonClick() {
-    location.reload();
-}
-
-function enableHotkeys() {
-    window.onkeydown = event => 
-    {
-        switch (event.key) {
-            case globals.keys.ENTER:
-                switch (appState.currentState) {
-                    // case appState.states.GAME_SETUP:
-                    //     setupView.startGame();
-                    //     break;
-                    case appState.states.GAME_RESULT:
-                        location.reload();
-                        break;
-                }
-                break;
-            case globals.keys.ESCAPE:
-                switch(appState.currentState) {
-                    // case appState.states.GAME_PROCESS:
-                    //     !gamePaused ? pauseGame() : optionsPageOpened ? returnToMainModalScreen() : resumeGame();
-                    //     break;
-                    case appState.states.GAME_RECORD:
-                        clearRecordsTable();
-                        appState.goToTheFollowingState();
-                        break;
-                }
-        }
-        
-    }
-}
+const scoreboardView = new ScoreboardView(appState, appOptions);
+scoreboardView.onRender();
 
 function setupFormToGameProcessMediator() {
 
@@ -166,47 +109,9 @@ function gameResultToGameProcessMediator() {
     gameProcessView.restartGame();
 }
 
-// SCOREBOARD COMPONENT (START)
 
-function openFieldRecords(size, appOptions) {
-
-    scoreboardPanel.onRecordTabLinkClick(size, appOptions)
-    const gameRecords = JSON.parse(localStorage.getItem(size));
-    clearRecordsTable();
-    loadRecordsTable(gameRecords);
+function gameResultToGameRecordMediator() {    
+    appState.goToTheFollowingState();
+    scoreboardView.initializeRecordTableButtons();
 }
 
-function clearRecordsTable() {
-    for (let i = 0; i < recordsTableItems.length; i++) {
-      document.getElementById(recordsTableItems[i]).remove();
-    }
-    recordsTableItems = [];
-}
-
-function loadRecordsTable(gameRecords) {
-    if (!gameRecords) {
-        return;
-    }
-
-    const recordsTable = document.getElementById('records-table');
-    createTableRecord(gameRecords.maxScore, 1, recordsTable, recordsTableItems);
-
-    for (let i = 0; i < gameRecords.scores.length; i++) {
-      createTableRecord(gameRecords.scores[i], i+2, recordsTable, recordsTableItems);
-    }
-}
-
-function createTableRecord(record, index, recordsTable, recordsTableItems) {
-    let domRecord = document.createElement('tr');
-    domRecord.id = `${record.name}${index}`;
-    domRecord.innerHTML = 
-    `<td>${index}</td>` +
-    `<td>${record.name}</td>` +
-    `<td>${record.attempts}</td>` +
-    `<td>${record.time} сек</td>` + 
-    `<td>${record.score}</td>`;
-
-    recordsTable.append(domRecord);
-    recordsTableItems.push(domRecord.id);
-}
-// SCOREBOARD COMPONENT (END)
