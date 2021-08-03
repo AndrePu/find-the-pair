@@ -1,12 +1,21 @@
 import { Scoreboard } from "../../../models";
 import { createTableRecord } from '../../dom-utility-functions';
+import * as globals from '../../globals';
 
 export class ScoreboardView {
-    constructor(appState, appOptions) {
+    constructor(appState, appOptions, hotkeyService) {
         this.scoreboardPanel = new Scoreboard();
         this.recordsTableItems = [];
         this.appState = appState;
         this.appOptions = appOptions;
+        this.NEXT_STATE_KEYDOWN_NAME = 'NEXT_STATE_KEYDOWN_NAME'; 
+        hotkeyService.registerKeydown(
+            this.NEXT_STATE_KEYDOWN_NAME,
+            (key) => {
+                return this.appState.currentState === this.appState.states.GAME_RECORD && key === globals.keys.ESCAPE
+            },
+            this.goToTheNextState.bind(this)
+            );
     }
 
     onRender() {
@@ -17,11 +26,13 @@ export class ScoreboardView {
         }
 
         const recordsReturnButton = document.getElementById('record_return_icon');
-        recordsReturnButton.onclick = () => {
-            this.clearRecordsTable();
-            this.scoreboardPanel.defaultRecordTableButtons();
-            this.appState.goToTheFollowingState();
-        }
+        recordsReturnButton.onclick = this.goToTheNextState.bind(this);
+    }
+
+    goToTheNextState() {
+        this.clearRecordsTable();
+        this.scoreboardPanel.defaultRecordTableButtons();
+        this.appState.goToTheFollowingState();
     }
 
     

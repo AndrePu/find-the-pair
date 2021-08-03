@@ -16,10 +16,12 @@ import { GamePausePopupDialogView } from '../module/components/game-pause-popup-
 import { GameProcessView } from '../module/components/game-process/game-process.view';
 import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
 import { onMenuButtonClick } from '../module/utility-functions';
+import { HotkeyService } from '../services/hotkey/hotkey.service';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
+const hotkeyService = new HotkeyService();
 
 const stopwatch = new Stopwatch();
 stopwatch.registerTimeListener((time) => {
@@ -51,7 +53,7 @@ const appThemeService = new AppThemeService(
 
 const setupController = new SetupController(
     new SetupViewModel(), 
-    new SetupView(setupFormToGameProcessMediator.bind(this))
+    new SetupView(setupFormToGameProcessMediator.bind(this), appState, hotkeyService)
 );
 setupController.initialize();
 
@@ -68,17 +70,20 @@ const gameProcessView = new GameProcessView(
     cardStyleOptions,
     stopwatch,
     gamePausePopupDialogView, 
-    gameProcessToGameResultMediator.bind(this)
+    gameProcessToGameResultMediator.bind(this),
+    hotkeyService
 );
 
 const gameResultView = new GameResultView(
     gameResultToGameProcessMediator,
     gameResultToGameRecordMediator,
-    onMenuButtonClick
+    onMenuButtonClick,
+    appState,
+    hotkeyService
 );
 gameResultView.render();
 
-const scoreboardView = new ScoreboardView(appState, appOptions);
+const scoreboardView = new ScoreboardView(appState, appOptions, hotkeyService);
 scoreboardView.onRender();
 
 function setupFormToGameProcessMediator() {

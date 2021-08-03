@@ -5,7 +5,7 @@ import * as globals from '../../globals';
 import * as scoreModule from '../../score';
 
 export class GameProcessView {
-    constructor(appState, appOptions, cardStyleOptions, stopwatch, gamePausePopupDialogView, onCloseMediatorFunction) {
+    constructor(appState, appOptions, cardStyleOptions, stopwatch, gamePausePopupDialogView, onCloseMediatorFunction, hotkeyService) {
         this.appState = appState;
         this.appOptions = appOptions;
         this.cardStyleOptions = cardStyleOptions;
@@ -18,9 +18,19 @@ export class GameProcessView {
         this.images = null;
         this.cardNames = null;
         
+        this.gamePaused =false;
         this.cardsLocked = false;
         this.currentCard = null;
         this.attempts = null;
+
+        this.ESCAPE_KEYDOWN = 'ESCAPE_KEYDOWN';
+        hotkeyService.registerKeydown(
+            this.ESCAPE_KEYDOWN,
+            (key) => {
+                return key === globals.keys.ESCAPE && this.appState.currentState === this.appState.states.GAME_PROCESS;
+            },
+            () => !this.gamePaused ? this.pauseGame() : this.gamePausePopupDialogView.optionsPageOpened ? this.gamePausePopupDialogView.returnToMainModalScreen() : this.resumeGame()
+        );
     }
 
     render() {
@@ -96,7 +106,7 @@ export class GameProcessView {
     clearGameParameters() {
         this.currentCard = null;
         this.cardsLocked = true;
-        // gamePaused = false;
+        this.gamePaused =false;
         this.stopwatch.reset();
         this.attempts = 0;
         document.getElementById('attempts').innerHTML = this.attempts;
@@ -111,7 +121,7 @@ export class GameProcessView {
     resumeGame() {
         this.gamePausePopupDialogView.hideModalWindow();
         this.stopwatch.run();
-        // gamePaused = false;
+        this.gamePaused =false;
     }
 
     pauseGame() {
@@ -119,7 +129,7 @@ export class GameProcessView {
             return;
         
         this.stopwatch.pause();
-        // gamePaused = true;
+        this.gamePaused =true;
         this.gamePausePopupDialogView.showModalWindow();
     }
     

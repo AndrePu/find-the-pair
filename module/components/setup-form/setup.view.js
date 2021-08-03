@@ -4,10 +4,19 @@ import * as globals from '../../globals';
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 
 export class SetupView {
-    constructor(onCloseFunction) {
+    constructor(onCloseFunction, appState, hotkeyService) {
         this.setupPageContainer = document.querySelector('#game_setup');
         this.onCloseFunction = onCloseFunction;
         this.setupViewModel = null;
+        this.START_GAME_KEYDOWN = 'START_GAME_KEYDOWN';
+        this.appState = appState;
+        hotkeyService.registerKeydown(
+            this.START_GAME_KEYDOWN,
+            (key) => {
+                return key === globals.keys.ENTER && this.appState.currentState === this.appState.states.GAME_SETUP
+            },
+            this.startGame.bind(this) 
+        );
     }
 
     render() {
@@ -65,20 +74,7 @@ export class SetupView {
 '    </div>      ';        
         
         const startButton = document.getElementById('start_button');
-        this.addEventListener();
         startButton.onclick = this.startGame.bind(this);
-    }
-
-    addEventListener() {
-        window.onkeydown = ($event) => {
-            if ($event.key === globals.keys.ENTER) {
-                this.startGame();
-            }
-        }
-    }
-
-    removeEventListener() {
-        window.onkeydown = null;
     }
 
     startGame() {
