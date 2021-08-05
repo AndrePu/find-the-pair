@@ -1,71 +1,84 @@
-import { Scoreboard } from "../../../models";
-import { createTableRecord } from '../../dom-utility-functions';
+import { createTableRow } from '../../dom-utility-functions';
 import * as globals from '../../globals';
 
 export class ScoreboardView {
-    constructor(appState, appOptions, hotkeyService) {
-        this.scoreboardPanel = new Scoreboard();
+    constructor() {
         this.recordsTableItems = [];
-        this.appState = appState;
-        this.appOptions = appOptions;
-        this.NEXT_STATE_KEYDOWN_NAME = 'NEXT_STATE_KEYDOWN_NAME'; 
-        hotkeyService.registerKeydown(
-            this.NEXT_STATE_KEYDOWN_NAME,
-            (key) => {
-                return this.appState.currentState === this.appState.states.GAME_RECORD && key === globals.keys.ESCAPE
-            },
-            this.goToTheNextState.bind(this)
-            );
+        this.onReturnButtonClick = null;
     }
 
-    onRender() {
+    get defaultTablinkClassName() {
+        return 'tablinks';
+    }
 
+    get tablinksActiveClassName() {
+        return {
+            dark: 'active-dark-mode',
+            light: 'active-light-mode'
+        };
+    }
+
+    onRender(appOptions) {
         const tabLinksButtons = document.getElementsByClassName('tablinks');    
         for(let i = 0; i < tabLinksButtons.length; i++) {
-            tabLinksButtons[i].onclick = () => this.openFieldRecords(tabLinksButtons[i].innerHTML, this.appOptions);
+            const tabName = tabLinksButtons[i].innerHTML;
+            tabLinksButtons[i].onclick = () => this.openScoreboardTab(tabName, appOptions);
         }
 
         const recordsReturnButton = document.getElementById('record_return_icon');
-        recordsReturnButton.onclick = this.goToTheNextState.bind(this);
+        recordsReturnButton.onclick = this.onReturnButtonClick.bind(this);
+    }
+   
+    openScoreboardTab(tabName, appOptions) {
+        this.setStylesForTabs(tabName, appOptions);
+        this.clearTableData();
+        this.loadDataForTab(JSON.parse(localStorage.getItem(tabName)));
     }
 
-    goToTheNextState() {
-        this.clearRecordsTable();
-        this.scoreboardPanel.defaultRecordTableButtons();
-        this.appState.goToTheFollowingState();
-    }
-
-    
-    openFieldRecords(size, appOptions) {
-        this.scoreboardPanel.onRecordTabLinkClick(size, appOptions)
-        const gameRecords = JSON.parse(localStorage.getItem(size));
-        this.clearRecordsTable();
-        this.loadRecordsTable(gameRecords);
-    }
-
-    clearRecordsTable() {
+    clearTableData() {
         for (let i = 0; i < this.recordsTableItems.length; i++) {
-        document.getElementById(this.recordsTableItems[i]).remove();
+            document.getElementById(this.recordsTableItems[i]).remove();
         }
         this.recordsTableItems = [];
     }
 
-    initializeRecordTableButtons() {
-        this.scoreboardPanel.initializeRecordTableButtons(this.appOptions);
-        this.loadRecordsTable(JSON.parse(localStorage.getItem(this.appOptions.fieldSize)));
+    setStylesForTabs(openedTabName, appOptions) {
+        const tabsElements = document.getElementsByClassName('tablinks');
+
+        for (let i = 0; i < tabsElements.length; i++) {
+            if (tabsElements[i].innerText === openedTabName) {
+                tabsElements[i].className = this.defaultTablinkClassName + globals.SPACE + this.tablinksActiveClassName[appOptions.theme];
+            } else {
+                tabsElements[i].className = this.defaultTablinkClassName;
+            }
+        }
     }
 
-    loadRecordsTable(gameRecords) {
+    loadDataForTab(gameRecords) {
         if (!gameRecords) {
             return;
         }
 
+        let position = 1;
         const recordsTable = document.getElementById('records-table');
-        createTableRecord(gameRecords.maxScore, 1, recordsTable, this.recordsTableItems);
+        this.createRecord(gameRecords.maxScore, position++, recordsTable);
 
         for (let i = 0; i < gameRecords.scores.length; i++) {
-            createTableRecord(gameRecords.scores[i], i+2, recordsTable, this.recordsTableItems);
+            this.createRecord(gameRecords.scores[i], position++, recordsTable);
         }
     }
 
-} 
+    createRecord(score, position, table) {
+
+        const id = `${score.name}${position}`;
+        const innerHtml = 
+        `<td>${position}</td>` +
+        `<td>${score.name}</td>` +
+        `<td>${score.attempts}</td>` +
+        `<td>${score.time} сек</td>` + 
+        `<td>${score.score}</td>`;
+
+        createTableRow(id, innerHtml, table);
+        this.recordsTableItems.push(id);
+    }
+}

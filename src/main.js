@@ -17,6 +17,7 @@ import { GameProcessView } from '../module/components/game-process/game-process.
 import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
 import { onMenuButtonClick } from '../module/utility-functions';
 import { HotkeyService } from '../services/hotkey/hotkey.service';
+import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
@@ -83,8 +84,13 @@ const gameResultView = new GameResultView(
 );
 gameResultView.render();
 
-const scoreboardView = new ScoreboardView(appState, appOptions, hotkeyService);
-scoreboardView.onRender();
+const scoreboardController = new ScoreboardController(
+    new ScoreboardView(),
+    appState,
+    appOptions,
+    hotkeyService
+);
+scoreboardController.initialize();
 
 function setupFormToGameProcessMediator() {
 
@@ -117,6 +123,6 @@ function gameResultToGameProcessMediator() {
 
 function gameResultToGameRecordMediator() {    
     appState.goToTheFollowingState();
-    scoreboardView.initializeRecordTableButtons();
+    scoreboardController.showScoreboard();
 }
 

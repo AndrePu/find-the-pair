@@ -11,16 +11,9 @@ export function getIndexOfCheckedElement(DOMElements) {
 }
 
 
-export function createTableRecord(record, index, recordsTable, recordsTableItems) {
-    let domRecord = document.createElement('tr');
-    domRecord.id = `${record.name}${index}`;
-    domRecord.innerHTML = 
-    `<td>${index}</td>` +
-    `<td>${record.name}</td>` +
-    `<td>${record.attempts}</td>` +
-    `<td>${record.time} сек</td>` + 
-    `<td>${record.score}</td>`;
-
-    recordsTable.append(domRecord);
-    recordsTableItems.push(domRecord.id);
+export function createTableRow(id, innerHtml, table) {
+    let row = document.createElement('tr');
+    row.id = id;
+    row.innerHTML = innerHtml;
+    table.append(row);
 }
