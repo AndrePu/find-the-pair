@@ -6,7 +6,7 @@ for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
 
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
-import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models';
+import { AppOptions, AppState, CardStyleOptions } from '../models';
 import { SetupView } from '../module/components/setup-form/setup.view';
 import { SetupController } from '../module/components/setup-form/setup.controller';
 import { AppThemeService } from '../services/app-theme.service';
@@ -14,10 +14,11 @@ import { GameResultView } from '../module/components/game-result/game-result.vie
 import { GamePausePopupDialogView } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.view';
 import { GameProcessView } from '../module/components/game-process/game-process.view';
 import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
-import { onMenuButtonClick } from '../module/utility-functions';
+import { reloadApplication } from '../module/utility-functions';
 import { HotkeyService } from '../services/hotkey/hotkey.service';
 import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
 import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
+import { GameResultController } from '../module/components/game-result/game-result.controller';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
@@ -64,7 +65,7 @@ let gamePausePopupDialogView = new GamePausePopupDialogView(
     cardStyleOptions,
     appThemeService,
     appOptions,
-    onMenuButtonClick
+    reloadApplication
 );
 
 const gameProcessView = new GameProcessView(
@@ -77,14 +78,17 @@ const gameProcessView = new GameProcessView(
     hotkeyService
 );
 
-const gameResultView = new GameResultView(
-    gameResultToGameProcessMediator,
-    gameResultToGameRecordMediator,
-    onMenuButtonClick,
+
+ const gameResultController = new GameResultController(
+    new GameResultView(
+        gameResultToGameProcessMediator,
+        gameResultToGameRecordMediator,
+        reloadApplication
+        ),
     appState,
     hotkeyService
-);
-gameResultView.render();
+ );
+gameResultController.initialize();
 
 const scoreboardController = new ScoreboardController(
     new ScoreboardView(),
