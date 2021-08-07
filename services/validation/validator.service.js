@@ -1,28 +1,23 @@
 const VALIDATION_ERROR = "Validation Error";
 
 export class ValidatorService {
-    constructor(validations) {
-        
-        this.validations = validations;
-    }
 
-
-    get validationErrorMessage() {
+    get lastValidationErrorMessage() {
         let message = VALIDATION_ERROR;
-        if (this._failedValidation) {
-            message = this._failedValidation.errorMessage;
+        if (this._lastFailedValidation) {
+            message = this._lastFailedValidation.errorMessage;
         }
         return message;
     }
 
-    validate() {
-        this._failedValidation = this.getFailedValidation();
-        return !this._failedValidation;
+    validate(validations) {
+        this._lastFailedValidation = this.getFailedValidation(validations);
+        return !this._lastFailedValidation;
     }
 
-    getFailedValidation() {
+    getFailedValidation(validations) {
         let failedValidation = null;
-        for (const validation of this.validations) {
+        for (const validation of validations) {
             if (!validation.isValid) {
                 failedValidation = validation;
                 break;

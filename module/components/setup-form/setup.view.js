@@ -1,22 +1,13 @@
 import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation } from '../../../services/validation';
 import * as globals from '../../globals';
-
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 
 export class SetupView {
-    constructor(onCloseFunction, appState, hotkeyService) {
+    constructor(callbackFunction) {
         this.setupPageContainer = document.querySelector('#game_setup');
-        this.onCloseFunction = onCloseFunction;
+        this.callbackFunction = callbackFunction;
         this.setupViewModel = null;
-        this.START_GAME_KEYDOWN = 'START_GAME_KEYDOWN';
-        this.appState = appState;
-        hotkeyService.registerKeydown(
-            this.START_GAME_KEYDOWN,
-            (key) => {
-                return key === globals.keys.ENTER && this.appState.currentState === this.appState.states.GAME_SETUP
-            },
-            this.startGame.bind(this) 
-        );
+        this.validatorService = new ValidatorService();
     }
 
     render() {
@@ -75,48 +66,61 @@ export class SetupView {
         
         const startButton = document.getElementById('start_button');
         startButton.onclick = this.startGame.bind(this);
-    }
 
-    startGame() {
-        if (this.buttonDisabled) {
-            return;
-        } else {
-            this.buttonDisabled = true;
-        }
-                
+        const warningMessageElement = document.getElementById('error_label');
         const nameElement = document.getElementById('name');
         const langElements = document.getElementsByName('language');
         const fieldSizeElements = document.getElementsByName('field-size');
         const themeElements = document.getElementsByName('theme');
-        const warningMessageElement = document.getElementById('error_label');
 
-        
-        const elementValidations = [
+        this.elementValidations = [
             new EmptyInputValidation(nameElement, globals.setupFormValidationErrors.EMPTY_NAME_FIELD_ERROR),
             new UnselectedRadioButtonValidation(langElements, globals.setupFormValidationErrors.UNCHECKED_LANGUAGE_ERROR),
             new UnselectedRadioButtonValidation(fieldSizeElements, globals.setupFormValidationErrors.UNCHECKED_FIELDSIZE_ERROR),
             new UnselectedRadioButtonValidation(themeElements, globals.setupFormValidationErrors.UNCHECKED_THEME_ERROR),
         ];
+        this.domElements = new SetupDomElements(
+            nameElement,
+            warningMessageElement,
+            langElements,
+            fieldSizeElements,
+            themeElements
+        );
+    }
 
-        const validatorService = new ValidatorService(elementValidations);
-        
-        if (validatorService.validate()) {
-    
-            const checkedLangElementIndex = getIndexOfCheckedElement(langElements);
-            const checkedFieldSizeElementIndex = getIndexOfCheckedElement(fieldSizeElements);
-            const checkedThemeElementIndex = getIndexOfCheckedElement(themeElements);
-    
-            this.setupViewModel.username = nameElement.value;
-            this.setupViewModel.interfaceLanguage = langElements[checkedLangElementIndex].value;
-            this.setupViewModel.fieldSize = fieldSizeElements[checkedFieldSizeElementIndex].value;
-            this.setupViewModel.theme = themeElements[checkedThemeElementIndex].value;
-
-            // this.removeEventListener();
-            this.onCloseFunction();
+    startGame() {
+        if (this.isStartGameFuncDisabled) {
+            return;
         } else {
-            warningMessageElement.innerText = validatorService.validationErrorMessage;
-            warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-            this.buttonDisabled = false;
+            this.isStartGameFuncDisabled = true;
         }
+
+        if (this.validatorService.validate(this.elementValidations)) {
+    
+            const checkedLangElementIndex = getIndexOfCheckedElement(this.domElements.langElements);
+            const checkedFieldSizeElementIndex = getIndexOfCheckedElement(this.domElements.fieldSizeElements);
+            const checkedThemeElementIndex = getIndexOfCheckedElement(this.domElements.themeElements);
+    
+            this.setupViewModel.username = this.domElements.nameElement.value;
+            this.setupViewModel.interfaceLanguage = this.domElements.langElements[checkedLangElementIndex].value;
+            this.setupViewModel.fieldSize = this.domElements.fieldSizeElements[checkedFieldSizeElementIndex].value;
+            this.setupViewModel.theme = this.domElements.themeElements[checkedThemeElementIndex].value;
+
+            this.callbackFunction();
+        } else {
+            this.domElements.warningMessageElement.innerText = this.validatorService.lastValidationErrorMessage;
+            this.domElements.warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
+            this.isStartGameFuncDisabled = false;
+        }
+    }
+}
+
+export class SetupDomElements {
+    constructor(nameElement, warningMessageElement, langElements, fieldSizeElements, themeElements) {
+        this.nameElement = nameElement;
+        this.warningMessageElement = warningMessageElement;
+        this.langElements = langElements;
+        this.fieldSizeElements = fieldSizeElements;
+        this.themeElements = themeElements;
     }
 }

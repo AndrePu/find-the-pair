@@ -9,7 +9,6 @@ import { Stopwatch } from '../module/stopwatch';
 import { AppOptions, AppState, CardStyleOptions, Scoreboard } from '../models';
 import { SetupView } from '../module/components/setup-form/setup.view';
 import { SetupController } from '../module/components/setup-form/setup.controller';
-import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
 import { AppThemeService } from '../services/app-theme.service';
 import { GameResultView } from '../module/components/game-result/game-result.view';
 import { GamePausePopupDialogView } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.view';
@@ -18,6 +17,7 @@ import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view'
 import { onMenuButtonClick } from '../module/utility-functions';
 import { HotkeyService } from '../services/hotkey/hotkey.service';
 import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
+import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
@@ -53,8 +53,10 @@ const appThemeService = new AppThemeService(
 );
 
 const setupController = new SetupController(
-    new SetupViewModel(), 
-    new SetupView(setupFormToGameProcessMediator.bind(this), appState, hotkeyService)
+    new SetupViewModel(),
+    new SetupView(setupFormToGameProcessMediator.bind(this)),
+    appState,
+    hotkeyService
 );
 setupController.initialize();
 
@@ -95,10 +97,10 @@ scoreboardController.initialize();
 function setupFormToGameProcessMediator() {
 
     appOptions.assignProperties(
-        setupController.setupViewModel.username,
-        setupController.setupViewModel.interfaceLanguage,
-        setupController.setupViewModel.fieldSize,
-        setupController.setupViewModel.theme,
+        setupController.setupView.setupViewModel.username,
+        setupController.setupView.setupViewModel.interfaceLanguage,
+        setupController.setupView.setupViewModel.fieldSize,
+        setupController.setupView.setupViewModel.theme,
     );
 
     appThemeService.applyAppTheme();
