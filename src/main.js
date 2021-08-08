@@ -19,6 +19,8 @@ import { HotkeyService } from '../services/hotkey/hotkey.service';
 import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
 import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
 import { GameResultController } from '../module/components/game-result/game-result.controller';
+import { GameProcessController } from '../module/components/game-process/game-process.controller';
+import { GamePausePopupDialogController } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.controller';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
@@ -61,21 +63,23 @@ const setupController = new SetupController(
 );
 setupController.initialize();
 
-let gamePausePopupDialogView = new GamePausePopupDialogView(
-    cardStyleOptions,
-    appThemeService,
-    appOptions,
-    reloadApplication
-);
-
-const gameProcessView = new GameProcessView(
+const gameProcessController = new GameProcessController(
+    new GameProcessView(
+        appOptions,
+        cardStyleOptions,
+        gameProcessToGameResultMediator.bind(this),
+    ),
     appState,
-    appOptions,
     cardStyleOptions,
+    hotkeyService,
     stopwatch,
-    gamePausePopupDialogView, 
-    gameProcessToGameResultMediator.bind(this),
-    hotkeyService
+    new GamePausePopupDialogController(
+        new GamePausePopupDialogView(
+        appThemeService,
+        appOptions,
+        reloadApplication
+        )
+    ), 
 );
 
 
@@ -101,29 +105,28 @@ scoreboardController.initialize();
 function setupFormToGameProcessMediator() {
 
     appOptions.assignProperties(
-        setupController.setupView.setupViewModel.username,
-        setupController.setupView.setupViewModel.interfaceLanguage,
-        setupController.setupView.setupViewModel.fieldSize,
-        setupController.setupView.setupViewModel.theme,
+        setupController.setupViewModel.username,
+        setupController.setupViewModel.interfaceLanguage,
+        setupController.setupViewModel.fieldSize,
+        setupController.setupViewModel.theme,
     );
 
     appThemeService.applyAppTheme();
     appState.goToTheFollowingState();
-    gameProcessView.render();
-    gameProcessView.startGame();
+    gameProcessController.initialize();
+    gameProcessController.startGame();
 }
 
 function gameProcessToGameResultMediator(displayInfo) {
     document.getElementById('game_result_label').innerText = displayInfo;
     appState.goToTheFollowingState();
-
 }
 
 function gameResultToGameProcessMediator() {    
-    appState.currentState = appState.states.GAME_PROCESS;
-    document.getElementById(appState.states.GAME_RESULT).style.display = globals.DOMElementStyle.display.NONE;
-    document.getElementById(appState.states.GAME_PROCESS).style.display = globals.DOMElementStyle.display.BLOCK;
-    gameProcessView.restartGame();
+    appState.currentState = globals.appStates.GAME_PROCESS;
+    document.getElementById(globals.appStates.GAME_RESULT).style.display = globals.DOMElementStyle.display.NONE;
+    document.getElementById(globals.appStates.GAME_PROCESS).style.display = globals.DOMElementStyle.display.BLOCK;
+    gameProcessController.restartGame();
 }
 
 

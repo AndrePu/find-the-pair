@@ -3,11 +3,6 @@ export const MAX_PAIRS_NUMBER = 18;
 export const MAX_TABLE_RECORDS_AMOUNT = 10;
 export const SPACE = " ";
 
-export const GAME_SETUP = 'game_setup';
-export const GAME_PROCESS = 'game_process';
-export const GAME_RESULT = 'game_result';
-export const GAME_RECORD = 'game_record';
-
 export const DOMElementStyle = {
     visibility: {
         VISIBLE: 'visible',
@@ -21,7 +16,9 @@ export const DOMElementStyle = {
     overflow: {
         HIDDEN: 'hidden',
         AUTO: 'auto'
-    }
+    },
+    backgroundSize: 'cover',
+    backgroundPosition: 'center center',
 };
 
 export const keys = {
@@ -64,3 +61,9 @@ export const appTheme = {
     }
 }
 
+export const appStates = {    
+    GAME_SETUP: 'game_setup',
+    GAME_PROCESS: 'game_process',
+    GAME_RESULT: 'game_result',
+    GAME_RECORD: 'game_record'
+}

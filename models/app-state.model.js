@@ -2,21 +2,14 @@ import * as globals from '../module/globals';
 
 export class AppState {
 
-    constructor() {
-        this.states = {
-            GAME_SETUP: globals.GAME_SETUP,
-            GAME_PROCESS: globals.GAME_PROCESS,
-            GAME_RESULT: globals.GAME_RESULT,
-            GAME_RECORD: globals.GAME_RECORD
-        };
-        
-        this.currentState = globals.GAME_SETUP;
+    constructor() {        
+        this.currentState = globals.appStates.GAME_SETUP;
     
         this.followingState = {
-            [globals.GAME_SETUP]: globals.GAME_PROCESS,
-            [globals.GAME_PROCESS]: globals.GAME_RESULT,
-            [globals.GAME_RESULT]: globals.GAME_RECORD,
-            [globals.GAME_RECORD]: globals.GAME_RESULT
+            [globals.appStates.GAME_SETUP]: globals.appStates.GAME_PROCESS,
+            [globals.appStates.GAME_PROCESS]: globals.appStates.GAME_RESULT,
+            [globals.appStates.GAME_RESULT]: globals.appStates.GAME_RECORD,
+            [globals.appStates.GAME_RECORD]: globals.appStates.GAME_RESULT
         };
     }
 

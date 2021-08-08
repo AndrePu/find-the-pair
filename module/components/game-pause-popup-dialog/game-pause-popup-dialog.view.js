@@ -2,45 +2,61 @@ import { getIndexOfCheckedElement } from "../../dom-utility-functions";
 import * as globals from '../../globals';
 
 export class GamePausePopupDialogView {
-    constructor(cardStyleOptions, appThemeService, appOptions, reloadApplication) {
-        this.cardStyleOptions = cardStyleOptions;
+    constructor(appThemeService, appOptions, reloadApplicationFunc) {
         this.appThemeService = appThemeService;
         this.appOptions = appOptions;
-        this.optionsPageOpened = false;
-        this.onRestartBtnClick = null;
-        this.reloadApplication = reloadApplication;
+        this.isOptionsPageOpened = false;
+        this.reloadApplicationFunc = reloadApplicationFunc;
     }
 
-    render() {        
-        const modalRestartButton = document.getElementById('modal_restart_button');
-        modalRestartButton.onclick = this.restartGame;
+    render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc) {        
+        document.getElementById('modal_restart_button').onclick = restartGameFunc;
+        document.getElementById('modal_resume_button').onclick = resumeGameFunc;
+        document.getElementById('modal_menu_button').onclick = this.reloadApplicationFunc;
+        document.getElementById('modal_options_button').onclick = this.openModalOptionsPage.bind(this);
+        document.getElementById('modal_optionsApply_button').onclick = this.applyOptionsFromModalWindow.bind(this);
 
-        const modalResumeButton = document.getElementById('modal_resume_button');
-        modalResumeButton.onclick = this.resumeGame;
+        document.getElementById('modal_icon').onclick = 
+            () => this.isOptionsPageOpened ? this.returnToMainScreen() : this.restartGame();
 
+        this.applyThemeForCardsFunc = applyThemeForCardsFunc.bind(this);
+    }
+
+    openModalOptionsPage() {
+        this.isOptionsPageOpened = true;
+    
+        document.getElementById('modal_buttons_container').style.display = globals.DOMElementStyle.display.NONE;
+        document.getElementById('modal_options_page').style.display = globals.DOMElementStyle.display.BLOCK;
+        document.getElementById('modal_title').innerText = 'Опции';
+        
         const modalIcon = document.getElementById('modal_icon');
-        modalIcon.onclick = () => this.optionsPageOpened ? this.returnToMainModalScreen() : this.restartGame();
-
-        const modalMenuButton = document.getElementById('modal_menu_button');
-        modalMenuButton.onclick = this.reloadApplication;
-
-        const modalOptionsButton = document.getElementById('modal_options_button');
-        modalOptionsButton.onclick = this.openModalOptionsPage.bind(this);
-
-        const modalOptionsApplyButton = document.getElementById('modal_optionsApply_button');
-        modalOptionsApplyButton.onclick = this.applyOptionsFromModalWindow.bind(this);
-    }
-
-    setCardsNames(cardsNames) {
-        this.cardsNames = cardsNames;
+        modalIcon.title = 'Назад';
+        modalIcon.innerText = '↩';
+    
+        const modalThemeElements = document.getElementsByName('modal_theme');
+        modalThemeElements.forEach((themeElement) => {
+            if (themeElement.value === this.appOptions.theme) {
+                themeElement.checked = true;
+            }
+        });
+    
+        const modalLangElements = document.getElementsByName('modal_language');
+        modalLangElements.forEach((langElement) => {
+            if (langElement.value === this.appOptions.interfaceLanguage) {
+                langElement.checked = true;
+            }
+        });
     }
     
-    setRestartGameFunction(restartGame) {
-        this.restartGame = restartGame;
-    }
-
-    setResumeGameFunction(resumeGame) {
-        this.resumeGame = resumeGame;
+    returnToMainScreen() {
+        this.isOptionsPageOpened = false;
+    
+        document.getElementById('modal_buttons_container').style.display = globals.DOMElementStyle.display.BLOCK;
+        document.getElementById('modal_options_page').style.display = globals.DOMElementStyle.display.NONE;
+        
+        const modalIcon = document.getElementById('modal_icon');
+        modalIcon.title = 'Закрыть';
+        modalIcon.innerText = '×';
     }
 
     showModalWindow() {
@@ -57,67 +73,18 @@ export class GamePausePopupDialogView {
         modalWindow.style.opacity = 0;
     }
 
-    changeThemeForCards(cardsNames, cardStyleOptions) {
-        for (let i = 0; i < cardsNames.length; i++) {
-            const cardElement = document.getElementById(cardsNames[i]);
-            if (cardElement) {
-                cardElement.style.background = cardStyleOptions.cardDefaultBackground;
-            }
-        }
-    }
-    
-    returnToMainModalScreen() {
-        const modalIcon = document.getElementById('modal_icon');
-        modalIcon.title = 'Закрыть';
-        modalIcon.innerText = '×';
-    
-        const modalTitle = document.getElementById('modal_title');
-        modalTitle.innerText = 'Опции';
-        this.optionsPageOpened = false;
-    
-        const modalOptionsPage = document.getElementById('modal_options_page');
-        modalOptionsPage.style.display = globals.DOMElementStyle.display.NONE;
-    
-        const modalButtonsContainer = document.getElementById('modal_buttons_container');
-        modalButtonsContainer.style.display = globals.DOMElementStyle.display.BLOCK;
+    applyOptionsFromModalWindow() {
+        this.changeThemeOptions();
     }
 
-    applyOptionsFromModalWindow() {
+    changeThemeOptions() {
         const modalThemeElements = document.getElementsByName('modal_theme');
         const checkedThemeElementIndex = getIndexOfCheckedElement(modalThemeElements);
         this.appOptions.theme = modalThemeElements[checkedThemeElementIndex].value;
         this.appThemeService.applyAppTheme();
-        this.changeThemeForCards(this.cardsNames, this.cardStyleOptions);
-    }
 
-    openModalOptionsPage() {
-        this.optionsPageOpened = true;
-    
-        const modalButtonsContainer = document.getElementById('modal_buttons_container');
-        modalButtonsContainer.style.display = globals.DOMElementStyle.display.NONE;
-    
-        const modalOptionsPage = document.getElementById('modal_options_page');
-        modalOptionsPage.style.display = globals.DOMElementStyle.display.BLOCK;
-        
-        const modalIcon = document.getElementById('modal_icon');
-        modalIcon.title = 'Назад';
-        modalIcon.innerText = '↩';
-    
-        const modalTitle = document.getElementById('modal_title');
-        modalTitle.innerText = 'Опции';
-    
-        const modalThemeElements = document.getElementsByName('modal_theme');
-        modalThemeElements.forEach((themeElement) => {
-            if (themeElement.value === this.appOptions.theme) {
-                themeElement.checked = true;
-            }
-        })
-    
-        const modalLangElements = document.getElementsByName('modal_language');
-        modalLangElements.forEach((langElement) => {
-            if (langElement.value === this.appOptions.interfaceLanguage) {
-                langElement.checked = true;
-            }
-        })
+        if (this.applyThemeForCardsFunc) {
+            this.applyThemeForCardsFunc();
+        }
     }
 }

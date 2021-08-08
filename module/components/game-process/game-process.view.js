@@ -1,49 +1,30 @@
-
 import { defineFieldSizes, generateCardsNames, defineCardsInfo, getImages  } from '../../utility-functions';
 import * as pipes from '../../pipes';
 import * as globals from '../../globals';
 import * as scoreModule from '../../score';
+import { setImage } from '../../dom-utility-functions';
 
 export class GameProcessView {
-    constructor(appState, appOptions, cardStyleOptions, stopwatch, gamePausePopupDialogView, onCloseMediatorFunction, hotkeyService) {
-        this.appState = appState;
+    constructor(appOptions, cardStyleOptions, callbackFunction) {
         this.appOptions = appOptions;
         this.cardStyleOptions = cardStyleOptions;
-        this.stopwatch = stopwatch;
-        this.gamePausePopupDialogView = gamePausePopupDialogView;
-        this.onCloseMediatorFunction = onCloseMediatorFunction; 
-
-        [this.rows, this.columns] = [null, null];
-        this.pair_amount = null;
-        this.images = null;
-        this.cardNames = null;
+        this.callbackFunction = callbackFunction; 
         
-        this.gamePaused =false;
+        this.TIME_FOR_SHOWING_CARDS = 5000;
+        this.TIME_FOR_FAILED_ATTEMPT = 1000;
         this.cardsLocked = false;
-        this.currentCard = null;
-        this.attempts = null;
-
-        this.ESCAPE_KEYDOWN = 'ESCAPE_KEYDOWN';
-        hotkeyService.registerKeydown(
-            this.ESCAPE_KEYDOWN,
-            (key) => {
-                return key === globals.keys.ESCAPE && this.appState.currentState === this.appState.states.GAME_PROCESS;
-            },
-            () => !this.gamePaused ? this.pauseGame() : this.gamePausePopupDialogView.optionsPageOpened ? this.gamePausePopupDialogView.returnToMainModalScreen() : this.resumeGame()
-        );
+        this.openedRecentlyCardName = null;
+        this.attempts = 0;
     }
 
-    render() {
-        const pauseButton = document.getElementById('pause_button');
-        pauseButton.onclick = this.pauseGame.bind(this);
-        
-        this.initializeBaseGameData();
-        this.gamePausePopupDialogView.setCardsNames(this.cardsNames); 
-        this.gamePausePopupDialogView.setRestartGameFunction(this.restartGame.bind(this));
-        this.gamePausePopupDialogView.setResumeGameFunction(this.resumeGame.bind(this));
-        this.gamePausePopupDialogView.render();
+    render(pauseGameFunc, applyThemeForCards, stopwatch) {
+        document.getElementById('pause_button').onclick = pauseGameFunc.bind(this);
+        this.applyThemeForCards = applyThemeForCards;
+        this.stopwatch = stopwatch;
 
+        this.initializeBaseGameData();
         this.buildGameField();
+        this.applyThemeForCards();
     }
 
     initializeBaseGameData() {
@@ -54,7 +35,7 @@ export class GameProcessView {
     }
 
     buildGameField() {
-        const gameProcessBlock = document.getElementById(this.appState.states.GAME_PROCESS);
+        const gameProcessBlock = document.getElementById(globals.appStates.GAME_PROCESS);
         for (let i = 1; i <= this.rows; i++) {
             let rowBlock = document.createElement('div');
             gameProcessBlock.prepend(rowBlock);
@@ -62,9 +43,16 @@ export class GameProcessView {
                 let card = document.createElement('div');
                 card.className = 'card';
                 card.id = `card${i}${j}`;
-                card.style.background = this.cardStyleOptions.cardDefaultBackground
                 rowBlock.append(card);
             }
+        }
+    }
+    
+    showCards() {
+        for (let i = 0; i < this.cardsNames.length; i++) {
+            let element = document.getElementById(this.cardsNames[i]);
+            element.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
+            setImage(element, this.cardsInfo[this.cardsNames[i]].chosenColor);
         }
     }
 
@@ -80,65 +68,25 @@ export class GameProcessView {
     runGame() {
         this.showCards();
         setTimeout(() => {
-            this.hideCards();
+            this.applyThemeForCards();
             this.stopwatch.run();
             this.cardsLocked = false;
-        }, 5000);
-    }
-
-    showCards() {
-        for (let i = 0; i < this.cardsNames.length; i++) {
-            let element = document.getElementById(this.cardsNames[i]);
-            element.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-            element.style.backgroundImage = this.cardsInfo[this.cardsNames[i]].chosenColor;
-            element.style.backgroundSize = this.cardStyleOptions.BACKGROUND_SIZE;
-            element.style.backgroundPosition = this.cardStyleOptions.BACKGROUND_POSITION;
-        }
-    }
-    
-    hideCards() {
-        for (let i = 0; i < this.cardsNames.length; i++) {
-            let element = document.getElementById(this.cardsNames[i]);
-            element.style.background = this.cardStyleOptions.cardDefaultBackground;
-        }
+        }, this.TIME_FOR_SHOWING_CARDS);
     }
     
     clearGameParameters() {
-        this.currentCard = null;
+        this.openedRecentlyCardName = null;
         this.cardsLocked = true;
-        this.gamePaused =false;
-        this.stopwatch.reset();
         this.attempts = 0;
         document.getElementById('attempts').innerHTML = this.attempts;
     }
 
-    restartGame() {
-        this.gamePausePopupDialogView.hideModalWindow();
-        this.clearGameParameters();
-        this.startGame();
-    }
-
-    resumeGame() {
-        this.gamePausePopupDialogView.hideModalWindow();
-        this.stopwatch.run();
-        this.gamePaused =false;
-    }
-
-    pauseGame() {
-        if (!this.stopwatch.isLaunched())
-            return;
-        
-        this.stopwatch.pause();
-        this.gamePaused =true;
-        this.gamePausePopupDialogView.showModalWindow();
-    }
-    
     defineGameLogic() {
 
         for (let i = 0; i < this.cardsNames.length; i++) {
             let element = document.getElementById(this.cardsNames[i]);
             element.onclick = () => {
-                if (this.cardsLocked || this.cardsNames[i] == this.currentCard) {
+                if (this.cardsLocked || this.cardsNames[i] == this.openedRecentlyCardName) {
                     return;
                 }
                 this.attempts++;
@@ -152,42 +100,31 @@ export class GameProcessView {
     
                     this.cardsInfo[pairedCard].visible = false;
                     this.cardsInfo[this.cardsNames[i]].visible = false;
-                    this.currentCard = null;
+                    this.openedRecentlyCardName = null;
     
-                    let gameFinished = true;
-    
-                    for (let i = 0; i < this.cardsNames.length; i++) {
-                        if (this.cardsInfo[this.cardsNames[i]].visible) {
-                            gameFinished = false;
-                            break;
-                        }
-                    }
-                    if (gameFinished) {
+                    if (this.cardsNames.every(cardName => !this.cardsInfo[cardName].visible)) {
                         this.endGame();
                     }
                 } else {
-                    element.style.backgroundImage = this.cardsInfo[this.cardsNames[i]].chosenColor;
-                    element.style.backgroundSize = this.cardStyleOptions.BACKGROUND_SIZE;
-                    element.style.backgroundPosition = this.cardStyleOptions.BACKGROUND_POSITION;
+                    setImage(element, this.cardsInfo[this.cardsNames[i]].chosenColor);
             
-                    if (this.currentCard) {
+                    if (this.openedRecentlyCardName) {
                         this.cardsLocked = true;
                         setTimeout(() => {
-                            this.cardsInfo[this.currentCard].chosen = false;
-                            document.getElementById(this.currentCard).style.background = this.cardStyleOptions.cardDefaultBackground;
-                            this.currentCard = null;
+                            this.cardsInfo[this.openedRecentlyCardName].chosen = false;
+                            document.getElementById(this.openedRecentlyCardName).style.background = this.cardStyleOptions.cardDefaultBackground;
                             element.style.background = this.cardStyleOptions.cardDefaultBackground;
+                            this.openedRecentlyCardName = null;
                             this.cardsLocked = false;
-                        }, 1000);
+                        }, this.TIME_FOR_FAILED_ATTEMPT);
                     } else {
                         this.cardsInfo[this.cardsNames[i]].chosen = true;
-                        this.currentCard = this.cardsNames[i];
+                        this.openedRecentlyCardName = this.cardsNames[i];
                     }
                 }
             }
         }
     }
-
     
     endGame() {
         this.stopwatch.pause();
@@ -234,7 +171,6 @@ export class GameProcessView {
         maxScore = fieldRecords.maxScore.score;
         localStorage.setItem(this.appOptions.fieldSize, JSON.stringify(fieldRecords));
         const displayInfo = scoreModule.getScoreInfoToDisplay(gotRecord, score, maxScore, oldScore);
-        this.onCloseMediatorFunction(displayInfo);
+        this.callbackFunction(displayInfo);
     }
-
 }

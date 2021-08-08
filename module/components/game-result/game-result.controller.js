@@ -8,13 +8,13 @@ export class GameResultController {
         hotkeyService.registerKeydown(
             this.MENU_KEYDOWN,
             (key) => {
-                return key === globals.keys.ENTER && appState.currentState === appState.states.GAME_RESULT; 
+                return key === globals.keys.ENTER && appState.currentState === globals.appStates.GAME_RESULT; 
             },
             this.gameResultView.reloadApplication
         );        
     }
 
     initialize() {
-        this.gameResultView.onRender();
+        this.gameResultView.render();
     }
 }
