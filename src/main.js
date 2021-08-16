@@ -15,17 +15,19 @@ import { GamePausePopupDialogView } from '../module/components/game-pause-popup-
 import { GameProcessView } from '../module/components/game-process/game-process.view';
 import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
 import { reloadApplication } from '../module/utility-functions';
-import { HotkeyService } from '../services/hotkey/hotkey.service';
+import { HotkeyService } from '../services/hotkey.service';
 import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
 import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
 import { GameResultController } from '../module/components/game-result/game-result.controller';
 import { GameProcessController } from '../module/components/game-process/game-process.controller';
 import { GamePausePopupDialogController } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.controller';
+import { ScoreService } from '../services/score.service';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
 const hotkeyService = new HotkeyService();
+const scoreService = new ScoreService();
 
 const stopwatch = new Stopwatch();
 stopwatch.registerTimeListener((time) => {
@@ -66,8 +68,7 @@ setupController.initialize();
 const gameProcessController = new GameProcessController(
     new GameProcessView(
         appOptions,
-        cardStyleOptions,
-        gameProcessToGameResultMediator.bind(this),
+        cardStyleOptions
     ),
     appState,
     cardStyleOptions,
@@ -80,6 +81,9 @@ const gameProcessController = new GameProcessController(
         reloadApplication
         )
     ), 
+    scoreService,
+    appOptions,
+    gameProcessToGameResultMediator.bind(this)
 );
 
 
@@ -90,7 +94,9 @@ const gameProcessController = new GameProcessController(
         reloadApplication
         ),
     appState,
-    hotkeyService
+    appOptions,
+    hotkeyService,
+    scoreService
  );
 gameResultController.initialize();
 
@@ -117,8 +123,8 @@ function setupFormToGameProcessMediator() {
     gameProcessController.startGame();
 }
 
-function gameProcessToGameResultMediator(displayInfo) {
-    document.getElementById('game_result_label').innerText = displayInfo;
+function gameProcessToGameResultMediator() {
+    gameResultController.fillCurrentScoreInfo();
     appState.goToTheFollowingState();
 }
 
@@ -129,9 +135,7 @@ function gameResultToGameProcessMediator() {
     gameProcessController.restartGame();
 }
 
-
 function gameResultToGameRecordMediator() {    
     appState.goToTheFollowingState();
     scoreboardController.showScoreboard();
 }
-

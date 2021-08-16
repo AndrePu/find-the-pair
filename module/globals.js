@@ -1,7 +1,11 @@
 
 export const MAX_PAIRS_NUMBER = 18;
+export const END_SCORE = 10000;
+export const MAX_EXTRA_SCORE = 100000;
 export const MAX_TABLE_RECORDS_AMOUNT = 10;
 export const SPACE = " ";
+export const CURRENT_SCORE = "CURRENT_SCORE";
+export const GOT_RECORD = "GOT_RECORD";
 
 export const DOMElementStyle = {
     visibility: {

@@ -1,7 +1,6 @@
 import { defineFieldSizes, generateCardsNames, defineCardsInfo, getImages  } from '../../utility-functions';
 import * as pipes from '../../pipes';
 import * as globals from '../../globals';
-import * as scoreModule from '../../score';
 import { setImage } from '../../dom-utility-functions';
 
 export class GameProcessView {
@@ -29,8 +28,8 @@ export class GameProcessView {
 
     initializeBaseGameData() {
         [this.rows, this.columns] = defineFieldSizes(this.appOptions.fieldSize);
-        this.pairs_amount = this.rows * this.columns / 2;
-        this.images = getImages(this.pairs_amount);
+        this.pairsAmount = this.rows * this.columns / 2;
+        this.images = getImages(this.pairsAmount);
         this.cardsNames = generateCardsNames(this.rows, this.columns);
     }
 
@@ -128,49 +127,6 @@ export class GameProcessView {
     
     endGame() {
         this.stopwatch.pause();
-        const score = scoreModule.calculateScore(this.attempts, this.stopwatch.time, this.pairs_amount);
-        
-        let fieldRecords = JSON.parse(localStorage.getItem(this.appOptions.fieldSize));
-
-        const currentScoreRecord = {
-            name: this.appOptions.username,
-            attempts: this.attempts,
-            time: this.stopwatch.time,
-            score: score
-        }
-
-        let gotRecord = false;
-        let maxScore = score;
-        let oldScore = maxScore;
-
-        if (!fieldRecords) {
-            fieldRecords = {
-                maxScore: {},
-                scores: []
-            };
-            fieldRecords.maxScore = currentScoreRecord;
-            oldScore = 0;
-            gotRecord = true;
-        }
-        else if (Number(fieldRecords.maxScore.score) < score) {
-            gotRecord = true;
-
-            oldScore = fieldRecords.maxScore.score;
-            fieldRecords.scores = [fieldRecords.maxScore].concat(fieldRecords.scores);
-            fieldRecords.maxScore = currentScoreRecord;
-            
-        } else {
-            fieldRecords.scores.push(currentScoreRecord);
-            fieldRecords.scores.sort((score1, score2) => score2.score - score1.score);
-        }
-
-        if (fieldRecords.scores.length === globals.MAX_TABLE_RECORDS_AMOUNT) {
-            fieldRecords.scores.pop();
-        }
-
-        maxScore = fieldRecords.maxScore.score;
-        localStorage.setItem(this.appOptions.fieldSize, JSON.stringify(fieldRecords));
-        const displayInfo = scoreModule.getScoreInfoToDisplay(gotRecord, score, maxScore, oldScore);
-        this.callbackFunction(displayInfo);
+        this.callbackFunction();
     }
 }

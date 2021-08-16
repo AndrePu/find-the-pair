@@ -1,8 +1,10 @@
 import * as globals from '../../globals';
 
 export class GameResultController {
-    constructor(gameResultView, appState, hotkeyService) {
+    constructor(gameResultView, appState, appOptions, hotkeyService, scoreService) {
         this.gameResultView = gameResultView;
+        this.appOptions = appOptions;
+        this.scoreService = scoreService;
         
         this.MENU_KEYDOWN = 'MENU_KEYDOWN';
         hotkeyService.registerKeydown(
@@ -16,5 +18,10 @@ export class GameResultController {
 
     initialize() {
         this.gameResultView.render();
+    }
+
+    fillCurrentScoreInfo() {
+        let displayInfo = this.scoreService.getScoreInfoToDisplay(this.appOptions.fieldSize);
+        document.getElementById('game_result_label').innerText = displayInfo;
     }
 }

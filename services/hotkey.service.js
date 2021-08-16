@@ -1,4 +1,4 @@
-import { Hotkey } from "../../models";
+import { Hotkey } from "../models";
 
 export class HotkeyService {
 
