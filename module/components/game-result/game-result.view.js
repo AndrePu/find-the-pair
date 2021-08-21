@@ -1,12 +1,9 @@
 export class GameResultView {
-    constructor(onRestartButtonClick, onRecordsButtonClick, reloadApplication) {
-        this.onRestartButtonClick = onRestartButtonClick;
-        this.onRecordsButtonClick = onRecordsButtonClick;
-        this.reloadApplication = reloadApplication;
+    constructor() {
         this.gameResultContainer = document.querySelector('#game_result');
     }
 
-    render() {
+    render(onRestartButtonClick, onRecordsButtonClick, reloadApplication) {
         this.gameResultContainer.innerHTML = '<h1>Ваш результат</h1>' +
         '<p id="game_result_label">Вы набрали некое количество очков.</p>' +
         '<div class="button-container">' +
@@ -20,13 +17,13 @@ export class GameResultView {
         '</div>';
 
         const restartButton = document.getElementById('restart_button');
-        restartButton.onclick = this.onRestartButtonClick;
+        restartButton.onclick = onRestartButtonClick;
             
         const recordsButton = document.getElementById('records_button');
-        recordsButton.onclick = this.onRecordsButtonClick;
+        recordsButton.onclick = onRecordsButtonClick;
 
         
         const menuButton = document.getElementById('menu_button');
-        menuButton.onclick = this.reloadApplication;
+        menuButton.onclick = reloadApplication;
     }
 }

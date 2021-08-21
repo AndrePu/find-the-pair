@@ -3,8 +3,8 @@ export class GamePausePopupDialogController {
         this.gamePausePopupDialogView = gamePausePopupDialogView;
     }
 
-    initialize(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc) {
-        this.gamePausePopupDialogView.render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc);
+    initialize(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc) {
+        this.gamePausePopupDialogView.render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc);
     }
 
     showModalWindow() {

@@ -3,14 +3,14 @@ import * as globals from '../../globals';
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 
 export class SetupView {
-    constructor(callbackFunction) {
+    constructor() {
         this.setupPageContainer = document.querySelector('#game_setup');
-        this.callbackFunction = callbackFunction;
         this.setupViewModel = null;
         this.validatorService = new ValidatorService();
     }
 
-    render() {
+    render(callbackFunction) {
+        this.callbackFunction = callbackFunction;
         this.setupPageContainer.innerHTML = '<div class="game-setup">' + 
 '        <h1>Игра "Найди пару"</h1>' +
 '        <div class="setup-block">' +

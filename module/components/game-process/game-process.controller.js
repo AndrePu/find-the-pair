@@ -1,14 +1,14 @@
 import * as globals from '../../globals';
 
 export class GameProcessController {
-    constructor(gameProcessView, appState, cardStyleOptions, hotkeyService, stopwatch, gamePausePopupDialogController, scoreService, appOptions, gameProcessToGameResultMediator) {
+    constructor(gameProcessView, cardStyleOptions, hotkeyService, stopwatch, gamePausePopupDialogController, scoreService, appOptions, appStateMediatorService) {
         this.gameProcessView = gameProcessView;
         this.stopwatch = stopwatch;
         this.gamePausePopupDialogController = gamePausePopupDialogController;
         this.cardStyleOptions = cardStyleOptions;
         this.scoreService = scoreService;
         this.appOptions = appOptions;
-        this.gameProcessToGameResultMediator = gameProcessToGameResultMediator;
+        this.appStateMediatorService = appStateMediatorService;
 
         this.gamePaused = false;
 
@@ -16,7 +16,7 @@ export class GameProcessController {
         hotkeyService.registerKeydown(
             this.ESCAPE_KEYDOWN,
             (key) => {
-                return key === globals.keys.ESCAPE && appState.currentState === globals.appStates.GAME_PROCESS;
+                return key === globals.keys.ESCAPE && this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_PROCESS;
             },
             () => !this.gamePaused ? this.pauseGame() : 
                 this.gamePausePopupDialogController.isOptionsPageOpened() ? 
@@ -31,7 +31,8 @@ export class GameProcessController {
         this.gamePausePopupDialogController.initialize(
             this.restartGame.bind(this),
             this.resumeGame.bind(this),
-            this.applyThemeForCards.bind(this)
+            this.applyThemeForCards.bind(this),
+            () => this.appStateMediatorService.changeState(globals.appStates.GAME_SETUP)
         );
     }
 
@@ -77,7 +78,7 @@ export class GameProcessController {
 
     endGame() {
         this.saveCurrentScore();
-        this.gameProcessToGameResultMediator();
+        this.appStateMediatorService.changeState(globals.appStates.GAME_RESULT);
     }
 
     saveCurrentScore() {

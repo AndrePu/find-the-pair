@@ -14,7 +14,6 @@ import { GameResultView } from '../module/components/game-result/game-result.vie
 import { GamePausePopupDialogView } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.view';
 import { GameProcessView } from '../module/components/game-process/game-process.view';
 import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
-import { reloadApplication } from '../module/utility-functions';
 import { HotkeyService } from '../services/hotkey.service';
 import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
 import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
@@ -22,6 +21,7 @@ import { GameResultController } from '../module/components/game-result/game-resu
 import { GameProcessController } from '../module/components/game-process/game-process.controller';
 import { GamePausePopupDialogController } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.controller';
 import { ScoreService } from '../services/score.service';
+import { AppStateMediatorService } from '../services/app-state-mediator.service';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
@@ -57,85 +57,57 @@ const appThemeService = new AppThemeService(
     ]
 );
 
+const appStateMediatorService = new AppStateMediatorService(
+    appState,
+    appOptions,
+    appThemeService
+);
+
 const setupController = new SetupController(
     new SetupViewModel(),
-    new SetupView(setupFormToGameProcessMediator.bind(this)),
-    appState,
-    hotkeyService
+    new SetupView(),
+    hotkeyService,
+    appStateMediatorService
 );
 setupController.initialize();
+appStateMediatorService.setupController = setupController;
 
 const gameProcessController = new GameProcessController(
     new GameProcessView(
         appOptions,
         cardStyleOptions
     ),
-    appState,
     cardStyleOptions,
     hotkeyService,
     stopwatch,
     new GamePausePopupDialogController(
         new GamePausePopupDialogView(
         appThemeService,
-        appOptions,
-        reloadApplication
+        appOptions
         )
     ), 
     scoreService,
     appOptions,
-    gameProcessToGameResultMediator.bind(this)
+    appStateMediatorService
 );
+appStateMediatorService.gameProcessController = gameProcessController;
 
 
  const gameResultController = new GameResultController(
-    new GameResultView(
-        gameResultToGameProcessMediator,
-        gameResultToGameRecordMediator,
-        reloadApplication
-        ),
-    appState,
+    new GameResultView(),
     appOptions,
     hotkeyService,
-    scoreService
+    scoreService,
+    appStateMediatorService
  );
 gameResultController.initialize();
+appStateMediatorService.gameResultController = gameResultController;
 
 const scoreboardController = new ScoreboardController(
     new ScoreboardView(),
-    appState,
     appOptions,
-    hotkeyService
+    hotkeyService,
+    appStateMediatorService
 );
 scoreboardController.initialize();
-
-function setupFormToGameProcessMediator() {
-
-    appOptions.assignProperties(
-        setupController.setupViewModel.username,
-        setupController.setupViewModel.interfaceLanguage,
-        setupController.setupViewModel.fieldSize,
-        setupController.setupViewModel.theme,
-    );
-
-    appThemeService.applyAppTheme();
-    appState.goToTheFollowingState();
-    gameProcessController.initialize();
-    gameProcessController.startGame();
-}
-
-function gameProcessToGameResultMediator() {
-    gameResultController.fillCurrentScoreInfo();
-    appState.goToTheFollowingState();
-}
-
-function gameResultToGameProcessMediator() {    
-    appState.currentState = globals.appStates.GAME_PROCESS;
-    document.getElementById(globals.appStates.GAME_RESULT).style.display = globals.DOMElementStyle.display.NONE;
-    document.getElementById(globals.appStates.GAME_PROCESS).style.display = globals.DOMElementStyle.display.BLOCK;
-    gameProcessController.restartGame();
-}
-
-function gameResultToGameRecordMediator() {    
-    appState.goToTheFollowingState();
-    scoreboardController.showScoreboard();
-}
+appStateMediatorService.scoreboardController = scoreboardController;
