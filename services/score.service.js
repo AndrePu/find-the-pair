@@ -7,11 +7,11 @@ export class ScoreService {
     }
 
     isCurrentScoreNewRecord() {
-        return localStorage.getItem(globals.GOT_RECORD);
+        return JSON.parse(localStorage.getItem(globals.GOT_RECORD));
     }
 
     getCurrentScore() {
-        return localStorage.getItem(globals.CURRENT_SCORE);
+        return JSON.parse(localStorage.getItem(globals.CURRENT_SCORE));
     }
 
     getScoreInfoToDisplay(fieldSize) {
@@ -47,13 +47,13 @@ export class ScoreService {
                 scores: []
             };
             fieldRecords.maxScore = newScoreRecord;
+            fieldRecords.scores = [newScoreRecord];
             gotRecord = true;
         }
         else if (Number(fieldRecords.maxScore.score) < newScoreRecord.score) {
             gotRecord = true;
-            fieldRecords.scores = [fieldRecords.maxScore].concat(fieldRecords.scores);
+            fieldRecords.scores = [newScoreRecord].concat(fieldRecords.scores);
             fieldRecords.maxScore = newScoreRecord;
-            
         } else {
             fieldRecords.scores.push(newScoreRecord);
             fieldRecords.scores.sort((score1, score2) => score2.score - score1.score);
