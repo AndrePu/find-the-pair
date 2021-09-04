@@ -26,7 +26,7 @@ export class AppStateMediatorService {
     }
 
     changeState(endState) {
-        const currentState = this.appState.currentState;
+        const currentState = this.getCurrentState();
         if (currentState === globals.appStates.GAME_SETUP && endState === globals.appStates.GAME_PROCESS) {
             this.setupFormToGameProcessMediator();
         } else if (currentState === globals.appStates.GAME_PROCESS && endState === globals.appStates.GAME_RESULT) {

@@ -1,11 +1,12 @@
 <!DOCTYPE html>
-<html>
+<html lang="ru">
 	<meta charset="utf-8"/>
     <head>
         <title>Web application</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="description" content="Game for improving memory by finding pairs of famous footballer images.">
     </head>
     <body>
-
         <div id="game_setup" class="game-setup-container"></div>
 
         <div id="game_process" class="game-process">
@@ -23,7 +24,7 @@
               <div id="modal_window_content" class="modal-content">
                 <div class="modal-header">
                   <h3 id="modal_title" class="modal-title">Пауза</h3>
-                  <a id="modal_icon" title="Закрыть">×</a>
+                  <span id="modal_icon" title="Закрыть">×</span>
                 </div>
                 <div class="modal-body">
                     <div id="modal_buttons_container">
@@ -78,7 +79,7 @@
         <div id="game_record" class="game-record">
             <div style="display: flex; justify-content: space-between;">
                   <h1>Таблица рекордов</h1>
-                  <a id="record_return_icon" title="Вернуться">↩</a>
+                  <span id="record_return_icon" title="Вернуться">↩</span>
                 </div>
                 <div id="tab" class="tab">
                   <button class="tablinks">3x4</button>

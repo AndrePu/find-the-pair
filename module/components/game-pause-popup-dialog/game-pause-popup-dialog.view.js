@@ -14,9 +14,10 @@ export class GamePausePopupDialogView {
         document.getElementById('modal_menu_button').onclick = reloadApplicationFunc;
         document.getElementById('modal_options_button').onclick = this.openModalOptionsPage.bind(this);
         document.getElementById('modal_optionsApply_button').onclick = this.applyOptionsFromModalWindow.bind(this);
+        document.getElementById('modal_window').style.display = globals.DOMElementStyle.display.FLEX;
 
         document.getElementById('modal_icon').onclick = 
-            () => this.isOptionsPageOpened ? this.returnToMainScreen() : this.restartGame();
+            () => this.isOptionsPageOpened ? this.returnToMainScreen() : resumeGameFunc();
 
         this.applyThemeForCardsFunc = applyThemeForCardsFunc.bind(this);
     }

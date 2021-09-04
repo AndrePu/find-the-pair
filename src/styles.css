@@ -128,7 +128,7 @@ body {
     /* элемент невидим для событий мыши */
     pointer-events: none;
     z-index: 1;
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
   }
