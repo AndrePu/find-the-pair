@@ -1,10 +1,6 @@
 'use strict';
 import './styles.css';
-for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
-    import ('./assets/images/' + i.toString() + '.jpg');
-}
 
-import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
 import { AppOptions, AppState, CardStyleOptions } from '../models';
 import { SetupView } from '../module/components/setup-form/setup.view';
