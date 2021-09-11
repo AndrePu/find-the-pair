@@ -1,0 +1,52 @@
+<div class="modal-dialog">
+    <div id="modal_window_content" class="modal-content">
+        <div class="modal-header">
+            <h3 id="modal_title" class="modal-title">Пауза</h3>
+            <span id="modal_icon" title="Закрыть">×</span>
+        </div>
+        <div class="modal-body">
+            <div id="modal_buttons_container">
+                <div class="button-container container-centerizer">
+                    <button id="modal_resume_button">Продолжить</button>
+                </div>
+                <div class="button-container container-centerizer">
+                    <button id="modal_restart_button">Рестарт</button>
+                </div>
+                <div class="button-container container-centerizer">
+                    <button id="modal_options_button">Опции</button>
+                </div>
+                <div class="button-container container-centerizer">
+                    <button id="modal_menu_button">Меню</button>
+                </div>
+            </div>
+
+            <div id="modal_options_page" style="display: none">
+                <div class="language-setup setup-block">
+                    <p><b>Выберите язык интерфейса:</b></p>
+                    <p>
+                        <input name="modal_language" type="radio" value="Russian" />Русский
+                    </p>
+                    <p>
+                        <input name="modal_language" type="radio" value="Ukrainian">Українська
+                    </p>
+                    <p>
+                        <input name="modal_language" type="radio" value="English">English
+                    </p>
+                </div>
+                <div class="theme-setup setup-block">
+                    <p><b>Выберите тему оформления</b></p>
+                    <p>
+                        <input name="modal_theme" type="radio" value="dark">Темная
+                    </p>
+                    <p>
+                        <input name="modal_theme" type="radio" value="light">Светлая
+                    </p>
+                </div>
+
+                <div class="button-container container-centerizer" style="margin-top: 30px">
+                    <button id="modal_optionsApply_button" class="dark-mode-button">Применить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

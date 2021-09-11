@@ -1,6 +1,11 @@
 'use strict';
 import './styles.css';
 
+for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
+    import ('./assets/images/' + i.toString() + '.jpg');
+}
+
+import * as globals from '../module/globals';
 import { Stopwatch } from '../module/stopwatch';
 import { AppOptions, AppState, CardStyleOptions } from '../models';
 import { SetupView } from '../module/components/setup-form/setup.view';
@@ -34,22 +39,22 @@ const appThemeService = new AppThemeService(
     appOptions,
     cardStyleOptions,
     [
-        'pause_button',
-        'modal_resume_button',
-        'modal_restart_button',
-        'modal_options_button',
-        'modal_menu_button',
-        'modal_optionsApply_button',
-        'restart_button',
-        'records_button',
-        'menu_button'
+        // 'pause_button',
+        // 'modal_resume_button',
+        // 'modal_restart_button',
+        // 'modal_options_button',
+        // 'modal_menu_button',
+        // 'modal_optionsApply_button',
+        // 'restart_button',
+        // 'records_button',
+        // 'menu_button'
     ],
     [
-        'modal_window_content'
+        // 'modal_window_content'
     ],
     [
-        'modal_icon',
-        'record_return_icon'
+        // 'modal_icon',
+        // 'record_return_icon'
     ]
 );
 

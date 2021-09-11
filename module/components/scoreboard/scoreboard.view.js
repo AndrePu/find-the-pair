@@ -1,5 +1,6 @@
 import { createTableRow } from '../../dom-utility-functions';
 import * as globals from '../../globals';
+import scoreboardHtmlTemplate from './scoreboard.html';
 
 export class ScoreboardView {
     constructor() {
@@ -19,6 +20,7 @@ export class ScoreboardView {
     }
 
     onRender(appOptions) {
+        document.getElementById('game_record').innerHTML = scoreboardHtmlTemplate;
         const tabLinksButtons = document.getElementsByClassName('tablinks');    
         for(let i = 0; i < tabLinksButtons.length; i++) {
             const tabName = tabLinksButtons[i].innerHTML;

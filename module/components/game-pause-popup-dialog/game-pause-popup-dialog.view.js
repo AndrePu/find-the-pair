@@ -1,5 +1,6 @@
 import { getIndexOfCheckedElement } from "../../dom-utility-functions";
 import * as globals from '../../globals';
+import gamePausePopupDialogHtmlTemplate from './game-pause-popup-dialog.html';
 
 export class GamePausePopupDialogView {
     constructor(appThemeService, appOptions) {
@@ -8,7 +9,8 @@ export class GamePausePopupDialogView {
         this.isOptionsPageOpened = false;
     }
 
-    render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc) {        
+    render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc) {    
+        document.getElementById('modal_window').innerHTML = gamePausePopupDialogHtmlTemplate;    
         document.getElementById('modal_restart_button').onclick = restartGameFunc;
         document.getElementById('modal_resume_button').onclick = resumeGameFunc;
         document.getElementById('modal_menu_button').onclick = reloadApplicationFunc;

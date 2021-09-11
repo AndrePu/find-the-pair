@@ -1,106 +1,20 @@
 <!DOCTYPE html>
 <html lang="ru">
-	<meta charset="utf-8"/>
-    <head>
-        <title>Web application</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="description" content="Game for improving memory by finding pairs of famous footballer images.">
-    </head>
-    <body>
-        <div id="game_setup" class="game-setup-container"></div>
+<meta charset="utf-8" />
 
-        <div id="game_process" class="game-process">
-            <p><b>Время</b></p>
-            <p id="stopwatch">0 сек</p>
+<head>
+  <title>Web application</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Game for improving memory by finding pairs of famous footballer images.">
+</head>
 
-            <p><b>Количество попыток</b></p>
-            <p id="attempts">0</p>
+<body>
+  <div id="game_setup" class="game-setup-container"></div>
+  <div id="game_process" class="game-process"></div>
+  <div id="modal_window" class="modal"></div>
+  <div id="game_result" class="game-result"></div>
+  <div id="game_record" class="game-record"></div>
+  <script src="bundle.js"></script>
+</body>
 
-            <button id="pause_button">Пауза</button>
-        </div>
-
-        <div id="modal_window" class="modal">
-            <div class="modal-dialog">
-              <div id="modal_window_content" class="modal-content">
-                <div class="modal-header">
-                  <h3 id="modal_title" class="modal-title">Пауза</h3>
-                  <span id="modal_icon" title="Закрыть">×</span>
-                </div>
-                <div class="modal-body">
-                    <div id="modal_buttons_container">
-                        <div class="button-container container-centerizer">
-                            <button id="modal_resume_button">Продолжить</button>
-                        </div>
-                        <div class="button-container container-centerizer">
-                            <button id="modal_restart_button">Рестарт</button>
-                        </div>
-                        <div class="button-container container-centerizer">
-                            <button id="modal_options_button">Опции</button>
-                        </div>
-                        <div class="button-container container-centerizer">
-                            <button id="modal_menu_button">Меню</button>
-                        </div>
-                    </div>
-
-                    <div id="modal_options_page" style="display: none">
-                        <div class="language-setup setup-block">
-                            <p><b>Выберите язык интерфейса:</b></p>
-                            <p>
-                                <input name="modal_language" type="radio" value="Russian"/>Русский
-                            </p>
-                            <p>
-                                <input name="modal_language" type="radio" value="Ukrainian">Українська
-                            </p>
-                            <p>
-                                <input name="modal_language" type="radio" value="English">English
-                            </p>
-                          </div>
-                          <div class="theme-setup setup-block">
-                            <p><b>Выберите тему оформления</b></p>
-                            <p>
-                                <input name="modal_theme" type="radio" value="dark">Темная
-                            </p>
-                            <p>
-                                <input name="modal_theme" type="radio" value="light">Светлая
-                            </p>
-                          </div>
-                          
-                          <div class="button-container container-centerizer" style="margin-top: 30px">
-                            <button id="modal_optionsApply_button" class="dark-mode-button">Применить</button>
-                          </div>
-                    </div>
-                </div>
-              </div>
-            </div>
-        </div>
-
-        <div id="game_result" class="game-result"></div>
-
-        <div id="game_record" class="game-record">
-            <div style="display: flex; justify-content: space-between;">
-                  <h1>Таблица рекордов</h1>
-                  <span id="record_return_icon" title="Вернуться">↩</span>
-                </div>
-                <div id="tab" class="tab">
-                  <button class="tablinks">3x4</button>
-                  <button class="tablinks">4x4</button>
-                  <button class="tablinks">5x4</button>
-                  <button class="tablinks">6x6</button>
-                </div>
-
-                <div class="tab-content" style="display: flex; justify-content: center;">
-                  <table id="records-table" class="table">
-                    <tr>
-                      <th>#</th>
-                      <th>Имя</th>
-                      <th>Попытки</th>
-                      <th>Время</th>
-                      <th>Счет</th>
-                    </tr>
-                  </table>
-                </div>
-        </div>
-
-        <script src="bundle.js"></script>        
-      </body>
 </html>

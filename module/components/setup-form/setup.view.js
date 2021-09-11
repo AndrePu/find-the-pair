@@ -1,6 +1,7 @@
 import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation } from '../../../services/validation';
 import * as globals from '../../globals';
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
+import setupFormHtmlTemplate from './setup-form.html';
 
 export class SetupView {
     constructor() {
@@ -11,55 +12,7 @@ export class SetupView {
 
     render(callbackFunction) {
         this.callbackFunction = callbackFunction;
-        this.setupPageContainer.innerHTML = `
-        <div class="game-setup">
-            <h1>Игра "Найди пару"</h1> 
-            <div class="setup-block"> 
-                <p><b>Введите ваше имя:</b></p> 
-                <p> 
-                    <input id="name" placeholder="Введите тут свое имя"> 
-                </p> 
-            </div>
-            <div class="setup-block"> 
-                <p><b>Выберите язык интерфейса:</b></p> 
-                <p>
-                    <input name="language" type="radio" value="Russian"/>Русский
-                </p>
-                <p>
-                    <input name="language" type="radio" value="Ukrainian">Українська
-                </p>
-                <p>
-                    <input name="language" type="radio" value="English">English
-                </p>
-            </div>
-            <div class="setup-block"> 
-                <p><b>Выберите размерность поля:</b></p> 
-                <p> 
-                    <input name="field-size" type="radio" value="3x4">3x4 
-                </p> 
-                <p> 
-                    <input name="field-size" type="radio" value="4x4">4x4 
-                </p> 
-                <p> 
-                    <input name="field-size" type="radio" value="5x4">5x4 
-                </p>
-                <p>
-                    <input name="field-size" type="radio" value="6x6">6x6
-                </p>
-            </div>
-            <div class="setup-block">
-                <p><b>Выберите тему оформления</b></p>
-                <p>
-                    <input name="theme" type="radio" value="dark">Темная 
-                </p>
-                <p>
-                    <input name="theme" type="radio" value="light">Светлая 
-                </p>
-            </div>
-            <p id="error_label" class="error-label">Ошибка</p>
-            <button id="start_button" class="dark-mode-button">Начать игру</button>
-        </div>      
-        `;        
+        this.setupPageContainer.innerHTML = setupFormHtmlTemplate;    
         
         const startButton = document.getElementById('start_button');
         startButton.onclick = this.startGame.bind(this);

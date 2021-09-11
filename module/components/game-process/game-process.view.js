@@ -2,6 +2,7 @@ import { defineFieldSizes, generateCardsNames, defineCardsInfo, getImages  } fro
 import * as pipes from '../../pipes';
 import * as globals from '../../globals';
 import { setImage } from '../../dom-utility-functions';
+import gameProcessHtmlTemplate from './game-process.html';
 
 export class GameProcessView {
     constructor(appOptions, cardStyleOptions, callbackFunction) {
@@ -17,6 +18,7 @@ export class GameProcessView {
     }
 
     render(pauseGameFunc, applyThemeForCards, stopwatch) {
+        document.getElementById('game_process').innerHTML = gameProcessHtmlTemplate;
         document.getElementById('pause_button').onclick = pauseGameFunc.bind(this);
         this.applyThemeForCards = applyThemeForCards;
         this.stopwatch = stopwatch;
