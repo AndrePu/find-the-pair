@@ -18,6 +18,17 @@ export class GamePausePopupDialogView {
         document.getElementById('modal_optionsApply_button').onclick = this.applyOptionsFromModalWindow.bind(this);
         document.getElementById('modal_window').style.display = globals.DOMElementStyle.display.FLEX;
 
+        this.appThemeService.registerButtons([
+            'modal_resume_button',
+            'modal_restart_button',
+            'modal_options_button',
+            'modal_menu_button',
+            'modal_optionsApply_button',
+        ]);
+        
+        this.appThemeService.registerModalWindows(['modal_window_content']);
+        this.appThemeService.registerIcons(['modal_icon']);
+
         document.getElementById('modal_icon').onclick = 
             () => this.isOptionsPageOpened ? this.returnToMainScreen() : resumeGameFunc();
 

@@ -37,25 +37,7 @@ stopwatch.registerTimeListener((time) => {
 
 const appThemeService = new AppThemeService(
     appOptions,
-    cardStyleOptions,
-    [
-        // 'pause_button',
-        // 'modal_resume_button',
-        // 'modal_restart_button',
-        // 'modal_options_button',
-        // 'modal_menu_button',
-        // 'modal_optionsApply_button',
-        // 'restart_button',
-        // 'records_button',
-        // 'menu_button'
-    ],
-    [
-        // 'modal_window_content'
-    ],
-    [
-        // 'modal_icon',
-        // 'record_return_icon'
-    ]
+    cardStyleOptions
 );
 
 const appStateMediatorService = new AppStateMediatorService(
@@ -70,13 +52,13 @@ const setupController = new SetupController(
     hotkeyService,
     appStateMediatorService
 );
-setupController.initialize();
 appStateMediatorService.setupController = setupController;
 
 const gameProcessController = new GameProcessController(
     new GameProcessView(
         appOptions,
-        cardStyleOptions
+        cardStyleOptions,
+        appThemeService
     ),
     cardStyleOptions,
     hotkeyService,
@@ -95,20 +77,20 @@ appStateMediatorService.gameProcessController = gameProcessController;
 
 
  const gameResultController = new GameResultController(
-    new GameResultView(),
+    new GameResultView(appThemeService),
     appOptions,
     hotkeyService,
     scoreService,
     appStateMediatorService
  );
-gameResultController.initialize();
 appStateMediatorService.gameResultController = gameResultController;
 
 const scoreboardController = new ScoreboardController(
-    new ScoreboardView(),
+    new ScoreboardView(appThemeService),
     appOptions,
     hotkeyService,
     appStateMediatorService
 );
-scoreboardController.initialize();
 appStateMediatorService.scoreboardController = scoreboardController;
+
+setupController.initialize();

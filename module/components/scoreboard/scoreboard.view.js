@@ -3,7 +3,8 @@ import * as globals from '../../globals';
 import scoreboardHtmlTemplate from './scoreboard.html';
 
 export class ScoreboardView {
-    constructor() {
+    constructor(appThemeService) {
+        this.appThemeService = appThemeService;
         this.recordsTableItems = [];
         this.onReturnButtonClick = null;
     }
@@ -29,6 +30,7 @@ export class ScoreboardView {
 
         const recordsReturnButton = document.getElementById('record_return_icon');
         recordsReturnButton.onclick = this.onReturnButtonClick.bind(this);
+        this.appThemeService.registerIcons(['record_return_icon']);
     }
    
     openScoreboardTab(tabName, appOptions) {

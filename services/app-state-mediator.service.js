@@ -6,6 +6,7 @@ export class AppStateMediatorService {
         this.appState = appState;
         this.appOptions = appOptions;
         this.appThemeService = appThemeService;
+        
     }
 
 
@@ -58,6 +59,10 @@ export class AppStateMediatorService {
     }
     
     gameProcessToGameResultMediator() {
+        if (!this.gameResultControllerInitialized) {
+            this._gameResultController.initialize();
+            this.gameResultControllerInitialized = true;
+        }
         this._gameResultController.fillCurrentScoreInfo();
         this.appState.goToTheFollowingState();
     }
@@ -70,6 +75,10 @@ export class AppStateMediatorService {
     }
     
     gameResultToGameRecordMediator() {    
+        if (!this.scoreboardControllerInitialized) {
+            this._scoreboardController.initialize();
+            this.scoreboardControllerInitialized = true;
+        }
         this.appState.goToTheFollowingState();
         this._scoreboardController.showScoreboard();
     }

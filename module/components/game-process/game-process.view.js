@@ -5,10 +5,11 @@ import { setImage } from '../../dom-utility-functions';
 import gameProcessHtmlTemplate from './game-process.html';
 
 export class GameProcessView {
-    constructor(appOptions, cardStyleOptions, callbackFunction) {
+    constructor(appOptions, cardStyleOptions, appThemeService) {
         this.appOptions = appOptions;
         this.cardStyleOptions = cardStyleOptions;
-        this.callbackFunction = callbackFunction; 
+        this.callbackFunction = null; 
+        this.appThemeService = appThemeService;
         
         this.TIME_FOR_SHOWING_CARDS = 5000;
         this.TIME_FOR_FAILED_ATTEMPT = 1000;
@@ -20,6 +21,8 @@ export class GameProcessView {
     render(pauseGameFunc, applyThemeForCards, stopwatch) {
         document.getElementById('game_process').innerHTML = gameProcessHtmlTemplate;
         document.getElementById('pause_button').onclick = pauseGameFunc.bind(this);
+        this.appThemeService.registerButtons(['pause_button']); 
+
         this.applyThemeForCards = applyThemeForCards;
         this.stopwatch = stopwatch;
 

@@ -1,8 +1,9 @@
 import gameResultHtmlTemplate from './game-result.html';
 
 export class GameResultView {
-    constructor() {
+    constructor(appThemeService) {
         this.gameResultContainer = document.querySelector('#game_result');
+        this.appThemeService = appThemeService;
     }
 
     render(onRestartButtonClick, onRecordsButtonClick, reloadApplication) {
@@ -17,5 +18,11 @@ export class GameResultView {
         
         const menuButton = document.getElementById('menu_button');
         menuButton.onclick = reloadApplication;
+
+        this.appThemeService.registerButtons([
+            'restart_button',
+            'records_button',
+            'menu_button'
+        ]);
     }
 }

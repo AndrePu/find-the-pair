@@ -2,12 +2,12 @@ import * as globals from '../module/globals';
 
 
 export class AppThemeService {
-    constructor(appOptions, cardStyleOptions, buttonNames, modalWindowNames, iconNames) {
+    constructor(appOptions, cardStyleOptions) {
         this.appOptions = appOptions;
         this.cardStyleOptions = cardStyleOptions;
-        this.buttonNames = buttonNames ? buttonNames : [];
-        this.modalWindowNames = modalWindowNames ? modalWindowNames : [];
-        this.iconNames = iconNames ? iconNames : [];
+        this.buttonNames = [];
+        this.modalWindowNames = [];
+        this.iconNames = [];
     }
 
     applyAppTheme() {
@@ -15,15 +15,40 @@ export class AppThemeService {
         document.body.style.background = globals.appTheme[this.appOptions.theme].background;
         this.cardStyleOptions.cardDefaultBackground = globals.appTheme[this.appOptions.theme].cardDefaultBackground;
 
-        for (let buttonName of this.buttonNames) {
+        this.applyThemeForButtons(this.buttonNames);
+        this.applyThemeForModals(this.modalWindowNames);
+        this.applyThemeForIcons(this.iconNames);
+    }
+
+    registerButtons(buttonNames) {
+        this.applyThemeForButtons(buttonNames);
+        this.buttonNames = this.buttonNames.concat(buttonNames);
+    }
+
+    registerModalWindows(modalWindowNames) {
+        this.applyThemeForModals(modalWindowNames);
+        this.modalWindowNames = this.modalWindowNames.concat(modalWindowNames);
+    }
+
+    registerIcons(iconNames) {
+        this.applyThemeForIcons(iconNames);
+        this.iconNames = this.iconNames.concat(iconNames);
+    }
+
+    applyThemeForButtons(buttonNames) {
+        for (let buttonName of buttonNames) {
             document.getElementById(buttonName).className = globals.appTheme[this.appOptions.theme].buttonClassName;
         }
+    }
 
-        for (let modalWindow of this.modalWindowNames) {
+    applyThemeForModals(modalWindowNames) {
+        for (let modalWindow of modalWindowNames) {
             document.getElementById(modalWindow).className = globals.appTheme[this.appOptions.theme].modalWindowContentClassName;
         }
+    }
 
-        for (let icon of this.iconNames) {
+    applyThemeForIcons(iconNames) {
+        for (let icon of iconNames) {
             document.getElementById(icon).className = globals.appTheme[this.appOptions.theme].iconClassName;
         }
     }
