@@ -31,9 +31,7 @@ const hotkeyService = new HotkeyService();
 const scoreService = new ScoreService();
 
 const stopwatch = new Stopwatch();
-stopwatch.registerTimeListener((time) => {
-    document.getElementById('stopwatch').innerHTML = `${time} сек`
-});
+stopwatch.registerTimeListener((time) =>  document.getElementById('stopwatch').innerHTML = `${time} сек`);
 
 const appThemeService = new AppThemeService(
     appOptions,

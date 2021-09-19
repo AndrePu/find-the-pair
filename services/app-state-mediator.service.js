@@ -31,7 +31,7 @@ export class AppStateMediatorService {
         if (currentState === globals.appStates.GAME_SETUP && endState === globals.appStates.GAME_PROCESS) {
             this.setupFormToGameProcessMediator();
         } else if (currentState === globals.appStates.GAME_PROCESS && endState === globals.appStates.GAME_RESULT) {
-            this.gameProcessToGameResultMediator()
+            this.gameProcessToGameResultMediator();
         } else if (endState === globals.appStates.GAME_SETUP) {
             reloadApplication();
         } else if (currentState === globals.appStates.GAME_RESULT && endState === globals.appStates.GAME_PROCESS) {
@@ -39,7 +39,7 @@ export class AppStateMediatorService {
         } else if (currentState == globals.appStates.GAME_RESULT && endState === globals.appStates.GAME_RECORD) {
             this.gameResultToGameRecordMediator();
         } else if (currentState === globals.appStates.GAME_RECORD && endState === globals.appStates.GAME_RESULT) {
-            this.appState.goToTheFollowingState()
+            this.appState.goToTheFollowingState();
         }
     }
    

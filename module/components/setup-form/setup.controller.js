@@ -10,9 +10,7 @@ export class SetupController {
 
         hotkeyService.registerKeydown(
             this.START_GAME_KEYDOWN,
-            (key) => {
-                return key === globals.keys.ENTER && this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_SETUP
-            },
+            (key) => key === globals.keys.ENTER && this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_SETUP,
             this.startGame.bind(this) 
         );
     }

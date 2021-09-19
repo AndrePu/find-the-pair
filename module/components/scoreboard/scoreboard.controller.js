@@ -10,7 +10,7 @@ export class ScoreboardController {
         hotkeyService.registerKeydown(
             this.NEXT_STATE_KEYDOWN_NAME,
             (key) => {
-                return this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_RECORD && key === globals.keys.ESCAPE
+                return this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_RECORD && key === globals.keys.ESCAPE;
             },
             () => this.appStateMediatorService.changeState(globals.appStates.GAME_RESULT)
             );

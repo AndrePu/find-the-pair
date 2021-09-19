@@ -22,7 +22,7 @@ export class ScoreService {
         const maxScore = fieldRecords.maxScore.score;
         const oldMaxScore = fieldRecords.scores.length > 1 ? fieldRecords.scores[1].score : 0;
 
-        const displayInfo = `Поздравляем. Вы победили!\n` + 
+        const displayInfo = 'Поздравляем. Вы победили!\n' + 
         `Ваш счет: ${currentScore} очков\n` +
         (gotRecord ? 'О, дааа. Да вы еще побили старый рекорд!\n' : '') +
         `Максимальный счет: ${maxScore} очков\n` + 

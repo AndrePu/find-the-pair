@@ -126,7 +126,7 @@ export class GameProcessView {
                         this.openedRecentlyCardName = this.cardsNames[i];
                     }
                 }
-            }
+            };
         }
     }
     

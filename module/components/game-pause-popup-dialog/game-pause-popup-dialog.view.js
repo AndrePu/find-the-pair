@@ -1,4 +1,4 @@
-import { getIndexOfCheckedElement } from "../../dom-utility-functions";
+import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 import * as globals from '../../globals';
 import gamePausePopupDialogHtmlTemplate from './game-pause-popup-dialog.html';
 

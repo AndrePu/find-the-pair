@@ -1,4 +1,4 @@
-const VALIDATION_ERROR = "Validation Error";
+const VALIDATION_ERROR = 'Validation Error';
 
 export class ValidatorService {
 

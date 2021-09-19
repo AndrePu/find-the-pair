@@ -90,7 +90,7 @@ export class GameProcessController {
             attempts: attempts,
             time: this.stopwatch.time,
             score: score
-        }
+        };
 
         this.scoreService.addNewScore(currentScore, this.appOptions.fieldSize);
     }

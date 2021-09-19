@@ -19,7 +19,7 @@ export function defineFieldSizes(fieldSize) {
             field = [6, 6];
             break;
         default:
-            throw Error("Field size defined in wrong way!");
+            throw Error('Field size defined in wrong way!');
     }
     return field;
 }
