@@ -38,10 +38,10 @@ export const fieldSizes = {
 };
 
 export const setupFormValidationErrors = {
-    EMPTY_NAME_FIELD_ERROR: 'Укажите, пожалуйста, свое имя',
-    UNCHECKED_LANGUAGE_ERROR: 'Выберите язык интерфейса для дальнейшей работы',
-    UNCHECKED_FIELDSIZE_ERROR: 'Следует указать размерность поля, чтобы начать игру',
-    UNCHECKED_THEME_ERROR: 'Выберите цветовое оформление, чтобы продолжить'
+    EMPTY_NAME_FIELD_ERROR: 'EMPTY_NAME_FIELD_ERROR',
+    UNCHECKED_LANGUAGE_ERROR: 'UNCHECKED_LANGUAGE_ERROR',
+    UNCHECKED_FIELDSIZE_ERROR: 'UNCHECKED_FIELDSIZE_ERROR',
+    UNCHECKED_THEME_ERROR: 'UNCHECKED_THEME_ERROR'
 };
 
 export const appTheme = {
@@ -70,4 +70,11 @@ export const appStates = {
     GAME_PROCESS: 'game_process',
     GAME_RESULT: 'game_result',
     GAME_RECORD: 'game_record'
+};
+
+export const languages = {
+    EN: 'en-en',
+    UA: 'ua-ua',
+    RU: 'ru-ru',
+    US: 'en-us'
 };

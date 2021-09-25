@@ -2,13 +2,12 @@ import * as globals from '../module/globals';
 import { reloadApplication } from '../module/utility-functions';
 
 export class AppStateMediatorService {
-    constructor(appState, appOptions, appThemeService) {
+    constructor(appState, appOptions, appThemeService, localizationService) {
         this.appState = appState;
         this.appOptions = appOptions;
         this.appThemeService = appThemeService;
-        
+        this.localizationService = localizationService;
     }
-
 
     set setupController(setupController) {
         this._setupController = setupController;
@@ -53,6 +52,7 @@ export class AppStateMediatorService {
         );
     
         this.appThemeService.applyAppTheme();
+        this.localizationService.changeLanguage(this.appOptions.interfaceLanguage);
         this.appState.goToTheFollowingState();
         this._gameProcessController.initialize();
         this._gameProcessController.startGame();

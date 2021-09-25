@@ -31,6 +31,16 @@ export class ScoreService {
         return displayInfo;
     }
 
+    getMaxScore(fieldSize) {
+        const fieldRecords = this.getRecordsForFieldSize(fieldSize);
+        return fieldRecords.maxScore.score;
+    }
+
+    getOldMaxScore(fieldSize) {
+        const fieldRecords = this.getRecordsForFieldSize(fieldSize);
+        return fieldRecords.scores.length > 1 ? fieldRecords.scores[1].score : 0;
+    }
+
     calculateScore(attempts, time, pairs_amount) {
         const minimumAttemptsAmount = pairs_amount*2;
         const extraScore = globals.MAX_EXTRA_SCORE*(pairs_amount*pairs_amount/(globals.MAX_PAIRS_NUMBER*globals.MAX_PAIRS_NUMBER)) - 5*time - 10*(attempts - minimumAttemptsAmount);

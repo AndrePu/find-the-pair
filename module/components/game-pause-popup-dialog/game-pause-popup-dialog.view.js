@@ -3,10 +3,11 @@ import * as globals from '../../globals';
 import gamePausePopupDialogHtmlTemplate from './game-pause-popup-dialog.html';
 
 export class GamePausePopupDialogView {
-    constructor(appThemeService, appOptions) {
+    constructor(appThemeService, appOptions, localizationService) {
         this.appThemeService = appThemeService;
         this.appOptions = appOptions;
         this.isOptionsPageOpened = false;
+        this.localizationService = localizationService;
     }
 
     render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc) {    
@@ -25,7 +26,19 @@ export class GamePausePopupDialogView {
             'modal_menu_button',
             'modal_optionsApply_button',
         ]);
-        
+
+        this.localizationService.registerHtmlElement('modal_resume_button', 'MODAL_RESUME_BUTTON', 'GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_restart_button', 'MODAL_RESTART_BUTTON', 'GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_options_button', 'MODAL_OPTIONS_BUTTON', 'GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_menu_button', 'MODAL_MENU_BUTTON', 'GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_optionsApply_button', 'MODAL_OPTIONS_APPLY_BUTTON', 'GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_title', 'MODAL_TITLE','GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_language_input_header', 'MODAL_LANGUAGE_INPUT_HEADER','GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_theme_input_header', 'MODAL_THEME_INPUT_HEADER','GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_dark-theme_input_name', 'MODAL_DARK_THEME_INPUT_NAME','GAME_PAUSE_POPUP_DIALOG');
+        this.localizationService.registerHtmlElement('modal_light-theme_input_name', 'MODAL_LIGHT_THEME_INPUT_NAME','GAME_PAUSE_POPUP_DIALOG');
+
+
         this.appThemeService.registerModalWindows(['modal_window_content']);
         this.appThemeService.registerIcons(['modal_icon']);
 
@@ -88,6 +101,7 @@ export class GamePausePopupDialogView {
 
     applyOptionsFromModalWindow() {
         this.changeThemeOptions();
+        this.changeLanguage();
     }
 
     changeThemeOptions() {
@@ -99,5 +113,12 @@ export class GamePausePopupDialogView {
         if (this.applyThemeForCardsFunc) {
             this.applyThemeForCardsFunc();
         }
+    }
+
+    changeLanguage() {
+        const modalLangElements = document.getElementsByName('modal_language');
+        const checkedLangElementIndex = getIndexOfCheckedElement(modalLangElements);
+        this.appOptions.interfaceLanguage = modalLangElements[checkedLangElementIndex].value;
+        this.localizationService.changeLanguage(this.appOptions.interfaceLanguage);
     }
 }

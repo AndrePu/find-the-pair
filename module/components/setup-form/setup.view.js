@@ -4,10 +4,12 @@ import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 import setupFormHtmlTemplate from './setup-form.html';
 
 export class SetupView {
-    constructor() {
+    constructor(localizationService) {
         this.setupPageContainer = document.querySelector('#game_setup');
         this.setupViewModel = null;
         this.validatorService = new ValidatorService();
+        this.localizationService = localizationService;
+        this.ENTRY_NAME = 'GAME_SETUP';
     }
 
     render(callbackFunction) {
@@ -36,6 +38,15 @@ export class SetupView {
             fieldSizeElements,
             themeElements
         );
+
+        this.localizationService.registerHtmlElement('start_button', 'START_BUTTON', 'GAME_SETUP');
+        this.localizationService.registerHtmlElement('game_name_header', 'GAME_NAME_HEADER', 'GAME_SETUP'),
+        this.localizationService.registerHtmlElement('name_input_header', 'NAME_INPUT_HEADER', 'GAME_SETUP');
+        this.localizationService.registerHtmlElement('language_input_header', 'LANGUAGE_INPUT_HEADER', 'GAME_SETUP');
+        this.localizationService.registerHtmlElement('field-size_input_header','FIELD_SIZE_INPUT_HEADER', 'GAME_SETUP');
+        this.localizationService.registerHtmlElement('theme_input_header','THEME_INPUT_HEADER', 'GAME_SETUP');
+        this.localizationService.registerHtmlElement('dark-theme_input_name','DARK_THEME_INPUT_NAME', 'GAME_SETUP');
+        this.localizationService.registerHtmlElement('light-theme_input_name','LIGHT_THEME_INPUT_NAME', 'GAME_SETUP');
     }
 
     startGame() {
@@ -58,7 +69,7 @@ export class SetupView {
 
             this.callbackFunction();
         } else {
-            this.domElements.warningMessageElement.innerText = this.validatorService.lastValidationErrorMessage;
+            this.domElements.warningMessageElement.innerText = this.localizationService.getLocalizedString(this.validatorService.lastValidationErrorMessage, this.ENTRY_NAME);
             this.domElements.warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
             this.isStartGameFuncDisabled = false;
         }

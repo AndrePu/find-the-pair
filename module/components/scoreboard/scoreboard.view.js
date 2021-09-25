@@ -3,8 +3,9 @@ import * as globals from '../../globals';
 import scoreboardHtmlTemplate from './scoreboard.html';
 
 export class ScoreboardView {
-    constructor(appThemeService) {
+    constructor(appThemeService, localizationService) {
         this.appThemeService = appThemeService;
+        this.localizationService = localizationService;
         this.recordsTableItems = [];
         this.onReturnButtonClick = null;
     }
@@ -27,6 +28,12 @@ export class ScoreboardView {
             const tabName = tabLinksButtons[i].innerHTML;
             tabLinksButtons[i].onclick = () => this.openScoreboardTab(tabName, appOptions);
         }
+
+        this.localizationService.registerHtmlElement('record_table_header', 'RECORD_TABLE_HEADER', 'GAME_RECORD');
+        this.localizationService.registerHtmlElement('name_column_header', 'NAME_COLUMN_HEADER', 'GAME_RECORD');
+        this.localizationService.registerHtmlElement('attempts_column_header', 'ATTEMPTS_COLUMN_HEADER', 'GAME_RECORD');
+        this.localizationService.registerHtmlElement('time_column_header', 'TIME_COLUMN_HEADER', 'GAME_RECORD');
+        this.localizationService.registerHtmlElement('score_column_header', 'SCORE_COLUMN_HEADER', 'GAME_RECORD');
 
         const recordsReturnButton = document.getElementById('record_return_icon');
         recordsReturnButton.onclick = this.onReturnButtonClick.bind(this);

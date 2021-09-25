@@ -23,12 +23,14 @@ import { GameProcessController } from '../module/components/game-process/game-pr
 import { GamePausePopupDialogController } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.controller';
 import { ScoreService } from '../services/score.service';
 import { AppStateMediatorService } from '../services/app-state-mediator.service';
+import { LocalizationService } from '../services/i18n/localization.service';
 
 const appState = new AppState();
 const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
 const hotkeyService = new HotkeyService();
 const scoreService = new ScoreService();
+const localizationService = new LocalizationService();
 
 const stopwatch = new Stopwatch();
 stopwatch.registerTimeListener((time) =>  document.getElementById('stopwatch').innerHTML = `${time} сек`);
@@ -41,12 +43,13 @@ const appThemeService = new AppThemeService(
 const appStateMediatorService = new AppStateMediatorService(
     appState,
     appOptions,
-    appThemeService
+    appThemeService,
+    localizationService
 );
 
 const setupController = new SetupController(
     new SetupViewModel(),
-    new SetupView(),
+    new SetupView(localizationService),
     hotkeyService,
     appStateMediatorService
 );
@@ -56,7 +59,8 @@ const gameProcessController = new GameProcessController(
     new GameProcessView(
         appOptions,
         cardStyleOptions,
-        appThemeService
+        appThemeService,
+        localizationService
     ),
     cardStyleOptions,
     hotkeyService,
@@ -64,7 +68,8 @@ const gameProcessController = new GameProcessController(
     new GamePausePopupDialogController(
         new GamePausePopupDialogView(
         appThemeService,
-        appOptions
+        appOptions,
+        localizationService
         )
     ), 
     scoreService,
@@ -75,7 +80,7 @@ appStateMediatorService.gameProcessController = gameProcessController;
 
 
  const gameResultController = new GameResultController(
-    new GameResultView(appThemeService),
+    new GameResultView(appThemeService, localizationService),
     appOptions,
     hotkeyService,
     scoreService,
@@ -84,7 +89,7 @@ appStateMediatorService.gameProcessController = gameProcessController;
 appStateMediatorService.gameResultController = gameResultController;
 
 const scoreboardController = new ScoreboardController(
-    new ScoreboardView(appThemeService),
+    new ScoreboardView(appThemeService, localizationService),
     appOptions,
     hotkeyService,
     appStateMediatorService

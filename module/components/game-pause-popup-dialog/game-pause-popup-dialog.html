@@ -1,50 +1,52 @@
 <div class="modal-dialog">
     <div id="modal_window_content" class="modal-content">
         <div class="modal-header">
-            <h3 id="modal_title" class="modal-title">Пауза</h3>
-            <span id="modal_icon" title="Закрыть">×</span>
+            <h3 id="modal_title" class="modal-title">Pause</h3>
+            <span id="modal_icon" title="Close">×</span>
         </div>
         <div class="modal-body">
             <div id="modal_buttons_container">
                 <div class="button-container container-centerizer">
-                    <button id="modal_resume_button">Продолжить</button>
+                    <button id="modal_resume_button">Continue</button>
                 </div>
                 <div class="button-container container-centerizer">
-                    <button id="modal_restart_button">Рестарт</button>
+                    <button id="modal_restart_button">Restart</button>
                 </div>
                 <div class="button-container container-centerizer">
-                    <button id="modal_options_button">Опции</button>
+                    <button id="modal_options_button">Options</button>
                 </div>
                 <div class="button-container container-centerizer">
-                    <button id="modal_menu_button">Меню</button>
+                    <button id="modal_menu_button">Menu</button>
                 </div>
             </div>
 
             <div id="modal_options_page" style="display: none">
                 <div class="language-setup setup-block">
-                    <p><b>Выберите язык интерфейса:</b></p>
+                    <h4 id="modal_language_input_header">Choose interface language:</h4>
                     <p>
-                        <input name="modal_language" type="radio" value="Russian" />Русский
+                        <input name="modal_language" type="radio" value="ru-ru">Русский
                     </p>
                     <p>
-                        <input name="modal_language" type="radio" value="Ukrainian">Українська
+                        <input name="modal_language" type="radio" value="ua-ua">Українська
                     </p>
                     <p>
-                        <input name="modal_language" type="radio" value="English">English
+                        <input name="modal_language" type="radio" value="en-en">English
                     </p>
                 </div>
                 <div class="theme-setup setup-block">
-                    <p><b>Выберите тему оформления</b></p>
+                    <h4 id="modal_theme_input_header">Choose theme:</h4>
                     <p>
-                        <input name="modal_theme" type="radio" value="dark">Темная
+                        <input name="modal_theme" type="radio" value="dark">
+                        <span id="modal_dark-theme_input_name">Dark</span>
                     </p>
                     <p>
-                        <input name="modal_theme" type="radio" value="light">Светлая
+                        <input name="modal_theme" type="radio" value="light">
+                        <span id="modal_light-theme_input_name">Light</span>
                     </p>
                 </div>
 
                 <div class="button-container container-centerizer" style="margin-top: 30px">
-                    <button id="modal_optionsApply_button" class="dark-mode-button">Применить</button>
+                    <button id="modal_optionsApply_button" class="dark-mode-button">Apply</button>
                 </div>
             </div>
         </div>

@@ -26,7 +26,16 @@ export class GameResultController {
     }
 
     fillCurrentScoreInfo() {
-        let displayInfo = this.scoreService.getScoreInfoToDisplay(this.appOptions.fieldSize);
-        document.getElementById('game_result_label').innerText = displayInfo;
+        document.getElementById('current_score_value').innerHTML = this.scoreService.getCurrentScore();
+        document.getElementById('max_score_value_label').innerHTML = this.scoreService.getMaxScore(this.appOptions.fieldSize);
+
+        if (this.scoreService.isCurrentScoreNewRecord()) {
+            document.getElementById('old_max_score_paragraph').style.display = globals.DOMElementStyle.display.BLOCK;
+            document.getElementById('old_max_score_value_label').innerHTML = this.scoreService.getOldMaxScore(this.appOptions.fieldSize);
+            document.getElementById('got_record_label').style.display = globals.DOMElementStyle.display.BLOCK;
+        } else {
+            document.getElementById('got_record_label').style.display = globals.DOMElementStyle.display.NONE;
+            document.getElementById('old_max_score_paragraph').style.display = globals.DOMElementStyle.display.NONE;
+        }
     }
 }

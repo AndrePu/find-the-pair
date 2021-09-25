@@ -5,11 +5,12 @@ import { setImage } from '../../dom-utility-functions';
 import gameProcessHtmlTemplate from './game-process.html';
 
 export class GameProcessView {
-    constructor(appOptions, cardStyleOptions, appThemeService) {
+    constructor(appOptions, cardStyleOptions, appThemeService, localizationService) {
         this.appOptions = appOptions;
         this.cardStyleOptions = cardStyleOptions;
         this.callbackFunction = null; 
         this.appThemeService = appThemeService;
+        this.localizationService = localizationService;
         
         this.TIME_FOR_SHOWING_CARDS = 5000;
         this.TIME_FOR_FAILED_ATTEMPT = 1000;
@@ -22,6 +23,9 @@ export class GameProcessView {
         document.getElementById('game_process').innerHTML = gameProcessHtmlTemplate;
         document.getElementById('pause_button').onclick = pauseGameFunc.bind(this);
         this.appThemeService.registerButtons(['pause_button']); 
+        this.localizationService.registerHtmlElement('pause_button', 'PAUSE_BUTTON', 'GAME_PROCESS');
+        this.localizationService.registerHtmlElement('time_header_name', 'TIME_HEADER_NAME', 'GAME_PROCESS');
+        this.localizationService.registerHtmlElement('attempts_header_name', 'ATTEMPTS_HEADER_NAME', 'GAME_PROCESS');
 
         this.applyThemeForCards = applyThemeForCards;
         this.stopwatch = stopwatch;
