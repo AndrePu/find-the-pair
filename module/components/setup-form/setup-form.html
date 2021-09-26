@@ -1,54 +1,72 @@
 <div class="game-setup">
     <h1 id="game_name_header">Game "Find the pair"</h1> 
     <div class="setup-block">
-        <h4 id="name_input_header">Enter your name:</h4> 
+        <b><p id="name_input_header">Enter your name:</p></b> 
         <p>
             <input id="name" placeholder="Enter your name here"> 
         </p>
     </div>
     <div class="setup-block"> 
-        <h4 id="language_input_header">Choose interface language:</h4> 
+        <b><p id="language_input_header">Choose interface language:</p></b> 
         <p>
-            <input name="language" type="radio" value="ru-ru"/>
-            <span>Русский</span>
+            <label>
+                <input name="language" type="radio" value="ru-ru"/>
+                <span>Русский</span>
+            </label>
         </p>
         <p>
-            <input name="language" type="radio" value="ua-ua">
-            <span>Українська</span>
+            <label>
+                <input name="language" type="radio" value="ua-ua">
+                <span>Українська</span>
+            </label>
         </p>
         <p>
-            <input name="language" type="radio" value="en-en">
-            <span>English</span>
+            <label>
+                <input name="language" type="radio" value="en-en">
+                <span>English</span>
+            </label>
         </p>
     </div>
     <div class="setup-block"> 
-        <h4 id="field-size_input_header">Choose field size:</h4> 
+        <b><p id="field-size_input_header">Choose field size:</p></b> 
         <p> 
-            <input name="field-size" type="radio" value="3x4">
-            <span>3x4</span> 
+            <label>
+                <input name="field-size" type="radio" value="3x4">
+                <span>3x4</span> 
+            </label>
         </p> 
         <p> 
-            <input name="field-size" type="radio" value="4x4">
-            <span>4x4</span> 
+            <label>
+                <input name="field-size" type="radio" value="4x4">
+                <span>4x4</span>
+            </label> 
         </p> 
         <p> 
-            <input name="field-size" type="radio" value="5x4">
-            <span>5x4</span> 
+            <label>
+                <input name="field-size" type="radio" value="5x4">
+                <span>5x4</span>
+            </label> 
         </p>
         <p>
-            <input name="field-size" type="radio" value="6x6">
-            <span>6x6</span>
+            <label>
+                <input name="field-size" type="radio" value="6x6">
+                <span>6x6</span>
+            </label>
         </p>
     </div>
     <div class="setup-block">
-        <h4 id="theme_input_header">Choose theme:</h4>
+        <b><p id="theme_input_header">Choose theme:</p></b>
         <p>
-            <input name="theme" type="radio" value="dark">
-            <span id="dark-theme_input_name">Dark</span>
+            <label>
+                <input name="theme" type="radio" value="dark">
+                <span id="dark-theme_input_name">Dark</span>
+            </label>
         </p>
         <p>
-            <input name="theme" type="radio" value="light">
-            <span id="light-theme_input_name">Light</span>
+            <label>
+                <input name="theme" type="radio" value="light">
+                <span id="light-theme_input_name">Light</span>
+            </label>
         </p>
     </div>
     <p id="error_label" class="error-label">Error</p>
