@@ -1,5 +1,5 @@
 import gameResultHtmlTemplate from './game-result.html';
-import { LanguageElement } from '../../../models/language-element.model';
+import { LanguageElement } from '../../models/language-element.model';
 
 export class GameResultView {
     constructor(appThemeService, localizationService) {

@@ -1,5 +1,5 @@
 import { ElementValidation } from './element-validation';
-import { getIndexOfCheckedElement } from '../../module/dom-utility-functions';
+import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 
 export class UnselectedRadioButtonValidation extends ElementValidation {
     constructor(element, errorMessage) {

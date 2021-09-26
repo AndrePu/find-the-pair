@@ -6,24 +6,24 @@ for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
 }
 
 import * as globals from '../module/globals';
-import { Stopwatch } from '../module/stopwatch';
-import { AppOptions, AppState, CardStyleOptions } from '../models';
+import { Stopwatch } from '../module/models/stopwatch.model';
+import { AppOptions, AppState, CardStyleOptions } from '../module/models';
 import { SetupView } from '../module/components/setup-form/setup.view';
 import { SetupController } from '../module/components/setup-form/setup.controller';
-import { AppThemeService } from '../services/app-theme.service';
+import { AppThemeService } from '../module/services/app-theme.service';
 import { GameResultView } from '../module/components/game-result/game-result.view';
 import { GamePausePopupDialogView } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.view';
 import { GameProcessView } from '../module/components/game-process/game-process.view';
 import { ScoreboardView } from '../module/components/scoreboard/scoreboard.view';
-import { HotkeyService } from '../services/hotkey.service';
+import { HotkeyService } from '../module/services/hotkey.service';
 import { ScoreboardController } from '../module/components/scoreboard/scoreboard.controller';
 import { SetupViewModel } from '../module/components/setup-form/setup.view-model';
 import { GameResultController } from '../module/components/game-result/game-result.controller';
 import { GameProcessController } from '../module/components/game-process/game-process.controller';
 import { GamePausePopupDialogController } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.controller';
-import { ScoreService } from '../services/score.service';
-import { AppStateMediatorService } from '../services/app-state-mediator.service';
-import { LocalizationService } from '../services/i18n/localization.service';
+import { ScoreService } from '../module/services/score.service';
+import { AppStateMediatorService } from '../module/services/app-state-mediator.service';
+import { LocalizationService } from '../module/services/i18n';
 
 const appState = new AppState();
 const appOptions = new AppOptions();

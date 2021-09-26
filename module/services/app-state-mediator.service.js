@@ -1,5 +1,5 @@
-import * as globals from '../module/globals';
-import { reloadApplication } from '../module/utility-functions';
+import * as globals from '../globals';
+import { reloadApplication } from '../utility-functions';
 
 export class AppStateMediatorService {
     constructor(appState, appOptions, appThemeService, localizationService) {

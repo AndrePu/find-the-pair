@@ -1,4 +1,4 @@
-import * as globals from '../module/globals';
+import * as globals from '../globals';
 
 export class ScoreService {
 

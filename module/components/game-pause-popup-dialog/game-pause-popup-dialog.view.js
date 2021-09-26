@@ -1,7 +1,7 @@
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 import * as globals from '../../globals';
 import gamePausePopupDialogHtmlTemplate from './game-pause-popup-dialog.html';
-import { LanguageElement } from '../../../models/language-element.model';
+import { LanguageElement } from '../../models/language-element.model';
 
 export class GamePausePopupDialogView {
     constructor(appThemeService, appOptions, localizationService) {

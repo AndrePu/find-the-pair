@@ -1,7 +1,7 @@
 import { createTableRow } from '../../dom-utility-functions';
 import * as globals from '../../globals';
 import scoreboardHtmlTemplate from './scoreboard.html';
-import { LanguageElement } from '../../../models/language-element.model';
+import { LanguageElement } from '../../models/language-element.model';
 export class ScoreboardView {
     constructor(appThemeService, localizationService) {
         this.appThemeService = appThemeService;

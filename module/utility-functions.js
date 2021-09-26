@@ -1,6 +1,6 @@
 import * as globals from './globals';
 import * as pipes from './pipes';
-import { CardInfo } from '../models';
+import { CardInfo } from './models';
 
 
 export function defineFieldSizes(fieldSize) {

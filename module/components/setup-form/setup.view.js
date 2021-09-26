@@ -1,8 +1,8 @@
-import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation } from '../../../services/validation';
+import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation } from '../../services/validation';
 import * as globals from '../../globals';
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 import setupFormHtmlTemplate from './setup-form.html';
-import { LanguageElement } from '../../../models/language-element.model';
+import { LanguageElement } from '../../models/language-element.model';
 
 export class SetupView {
     constructor(localizationService) {

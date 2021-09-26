@@ -3,7 +3,7 @@ import * as pipes from '../../pipes';
 import * as globals from '../../globals';
 import { setImage } from '../../dom-utility-functions';
 import gameProcessHtmlTemplate from './game-process.html';
-import { LanguageElement } from '../../../models/language-element.model';
+import { LanguageElement } from '../../models/language-element.model';
 
 export class GameProcessView {
     constructor(appOptions, cardStyleOptions, appThemeService, localizationService) {
