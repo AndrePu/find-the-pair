@@ -3,6 +3,7 @@ import * as pipes from '../../pipes';
 import * as globals from '../../globals';
 import { setImage } from '../../dom-utility-functions';
 import gameProcessHtmlTemplate from './game-process.html';
+import { LanguageElement } from '../../../models/language-element.model';
 
 export class GameProcessView {
     constructor(appOptions, cardStyleOptions, appThemeService, localizationService) {
@@ -12,6 +13,7 @@ export class GameProcessView {
         this.appThemeService = appThemeService;
         this.localizationService = localizationService;
         
+        this.ENTRY_NAME = 'GAME_PROCESS';
         this.TIME_FOR_SHOWING_CARDS = 5000;
         this.TIME_FOR_FAILED_ATTEMPT = 1000;
         this.cardsLocked = false;
@@ -23,9 +25,12 @@ export class GameProcessView {
         document.getElementById('game_process').innerHTML = gameProcessHtmlTemplate;
         document.getElementById('pause_button').onclick = pauseGameFunc.bind(this);
         this.appThemeService.registerButtons(['pause_button']); 
-        this.localizationService.registerHtmlElement('pause_button', 'PAUSE_BUTTON', 'GAME_PROCESS');
-        this.localizationService.registerHtmlElement('time_header_name', 'TIME_HEADER_NAME', 'GAME_PROCESS');
-        this.localizationService.registerHtmlElement('attempts_header_name', 'ATTEMPTS_HEADER_NAME', 'GAME_PROCESS');
+
+        this.localizationService.registerHtmlElements([
+            new LanguageElement('pause_button', 'PAUSE_BUTTON', this.ENTRY_NAME),
+            new LanguageElement('time_header_name', 'TIME_HEADER_NAME', this.ENTRY_NAME),
+            new LanguageElement('attempts_header_name', 'ATTEMPTS_HEADER_NAME', this.ENTRY_NAME),
+        ]);
 
         this.applyThemeForCards = applyThemeForCards;
         this.stopwatch = stopwatch;

@@ -1,13 +1,14 @@
 import { createTableRow } from '../../dom-utility-functions';
 import * as globals from '../../globals';
 import scoreboardHtmlTemplate from './scoreboard.html';
-
+import { LanguageElement } from '../../../models/language-element.model';
 export class ScoreboardView {
     constructor(appThemeService, localizationService) {
         this.appThemeService = appThemeService;
         this.localizationService = localizationService;
         this.recordsTableItems = [];
         this.onReturnButtonClick = null;
+        this.ENTRY_NAME = 'GAME_RECORD';
     }
 
     get defaultTablinkClassName() {
@@ -29,12 +30,14 @@ export class ScoreboardView {
             tabLinksButtons[i].onclick = () => this.openScoreboardTab(tabName, appOptions);
         }
 
-        this.localizationService.registerHtmlElement('record_table_header', 'RECORD_TABLE_HEADER', 'GAME_RECORD');
-        this.localizationService.registerHtmlElement('name_column_header', 'NAME_COLUMN_HEADER', 'GAME_RECORD');
-        this.localizationService.registerHtmlElement('attempts_column_header', 'ATTEMPTS_COLUMN_HEADER', 'GAME_RECORD');
-        this.localizationService.registerHtmlElement('time_column_header', 'TIME_COLUMN_HEADER', 'GAME_RECORD');
-        this.localizationService.registerHtmlElement('score_column_header', 'SCORE_COLUMN_HEADER', 'GAME_RECORD');
-
+        this.localizationService.registerHtmlElements([
+            new LanguageElement('record_table_header', 'RECORD_TABLE_HEADER', this.ENTRY_NAME),
+            new LanguageElement('name_column_header', 'NAME_COLUMN_HEADER', this.ENTRY_NAME),
+            new LanguageElement('attempts_column_header', 'ATTEMPTS_COLUMN_HEADER', this.ENTRY_NAME),
+            new LanguageElement('time_column_header', 'TIME_COLUMN_HEADER', this.ENTRY_NAME),
+            new LanguageElement('score_column_header', 'SCORE_COLUMN_HEADER', this.ENTRY_NAME),
+        ]);
+        
         const recordsReturnButton = document.getElementById('record_return_icon');
         recordsReturnButton.onclick = this.onReturnButtonClick.bind(this);
         this.appThemeService.registerIcons(['record_return_icon']);

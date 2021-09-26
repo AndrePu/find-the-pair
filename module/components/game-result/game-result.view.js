@@ -1,10 +1,12 @@
 import gameResultHtmlTemplate from './game-result.html';
+import { LanguageElement } from '../../../models/language-element.model';
 
 export class GameResultView {
     constructor(appThemeService, localizationService) {
         this.gameResultContainer = document.querySelector('#game_result');
         this.appThemeService = appThemeService;
         this.localizationService = localizationService;
+        this.ENTRY_NAME = 'GAME_RESULT';
     }
 
     render(onRestartButtonClick, onRecordsButtonClick, reloadApplication) {
@@ -25,14 +27,17 @@ export class GameResultView {
             'menu_button'
         ]);
 
-        this.localizationService.registerHtmlElement('restart_button', 'RESTART_BUTTON', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('records_button', 'RECORDS_BUTTON', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('menu_button', 'MENU_BUTTON', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('game_result_header', 'GAME_RESULT_HEADER', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('congratulations_label', 'CONGRATULATIONS_LABEL', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('current_score_label', 'CURRENT_SCORE_LABEL', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('got_record_label', 'GOT_RECORD_LABEL', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('max_score_label', 'MAX_SCORE_LABEL', 'GAME_RESULT');
-        this.localizationService.registerHtmlElement('old_max_score_label', 'OLD_MAX_SCORE_LABEL', 'GAME_RESULT');
+        this.localizationService.registerHtmlElements([
+            new LanguageElement('restart_button', 'RESTART_BUTTON', this.ENTRY_NAME),
+            new LanguageElement('records_button', 'RECORDS_BUTTON', this.ENTRY_NAME),
+            new LanguageElement('menu_button', 'MENU_BUTTON', this.ENTRY_NAME),
+            new LanguageElement('game_result_header', 'GAME_RESULT_HEADER', this.ENTRY_NAME),
+            new LanguageElement('congratulations_label', 'CONGRATULATIONS_LABEL', this.ENTRY_NAME),
+            new LanguageElement('current_score_label', 'CURRENT_SCORE_LABEL', this.ENTRY_NAME),
+            new LanguageElement('got_record_label', 'GOT_RECORD_LABEL', this.ENTRY_NAME),
+            new LanguageElement('max_score_label', 'MAX_SCORE_LABEL', this.ENTRY_NAME),
+            new LanguageElement('old_max_score_label', 'OLD_MAX_SCORE_LABEL', this.ENTRY_NAME),
+        ]);
+        
     }
 }

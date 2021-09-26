@@ -18,11 +18,11 @@ export class LocalizationService {
         }
     }
 
-    registerHtmlElement(elementName, elLangName, entryName) {
-        const langElement = new LanguageElement(elementName, entryName, elLangName);
-        this.defineElementLanguage(langElement);
-        this.buttons.push(langElement);
-
+    registerHtmlElements(langElements) {
+        for (const langElement of langElements) {
+            this.defineElementLanguage(langElement);
+            this.buttons.push(langElement);
+        }
     }
 
     changeLanguage(language) {
@@ -39,13 +39,5 @@ export class LocalizationService {
 
     getLocalizedString(stringToLocalize, entryName) {
         return this.vocabularies[this.currentLanguage][entryName][stringToLocalize];
-    }
-}
-
-class LanguageElement {
-    constructor(elementName, entryName, elLangName) {
-        this.elementName = elementName;
-        this.entryName = entryName;
-        this.elLangName = elLangName;
     }
 }

@@ -2,6 +2,7 @@ import { ValidatorService, EmptyInputValidation, UnselectedRadioButtonValidation
 import * as globals from '../../globals';
 import { getIndexOfCheckedElement } from '../../dom-utility-functions';
 import setupFormHtmlTemplate from './setup-form.html';
+import { LanguageElement } from '../../../models/language-element.model';
 
 export class SetupView {
     constructor(localizationService) {
@@ -39,14 +40,17 @@ export class SetupView {
             themeElements
         );
 
-        this.localizationService.registerHtmlElement('start_button', 'START_BUTTON', 'GAME_SETUP');
-        this.localizationService.registerHtmlElement('game_name_header', 'GAME_NAME_HEADER', 'GAME_SETUP'),
-        this.localizationService.registerHtmlElement('name_input_header', 'NAME_INPUT_HEADER', 'GAME_SETUP');
-        this.localizationService.registerHtmlElement('language_input_header', 'LANGUAGE_INPUT_HEADER', 'GAME_SETUP');
-        this.localizationService.registerHtmlElement('field-size_input_header','FIELD_SIZE_INPUT_HEADER', 'GAME_SETUP');
-        this.localizationService.registerHtmlElement('theme_input_header','THEME_INPUT_HEADER', 'GAME_SETUP');
-        this.localizationService.registerHtmlElement('dark-theme_input_name','DARK_THEME_INPUT_NAME', 'GAME_SETUP');
-        this.localizationService.registerHtmlElement('light-theme_input_name','LIGHT_THEME_INPUT_NAME', 'GAME_SETUP');
+        this.localizationService.registerHtmlElements([
+            new LanguageElement('start_button', 'START_BUTTON', this.ENTRY_NAME),
+            new LanguageElement('game_name_header', 'GAME_NAME_HEADER', this.ENTRY_NAME),
+            new LanguageElement('name_input_header', 'NAME_INPUT_HEADER', this.ENTRY_NAME),
+            new LanguageElement('language_input_header', 'LANGUAGE_INPUT_HEADER', this.ENTRY_NAME),
+            new LanguageElement('field-size_input_header','FIELD_SIZE_INPUT_HEADER', this.ENTRY_NAME),
+            new LanguageElement('theme_input_header','THEME_INPUT_HEADER', this.ENTRY_NAME),
+            new LanguageElement('dark-theme_input_name','DARK_THEME_INPUT_NAME', this.ENTRY_NAME),
+            new LanguageElement('light-theme_input_name','LIGHT_THEME_INPUT_NAME', this.ENTRY_NAME)
+        ]);
+        
     }
 
     startGame() {
