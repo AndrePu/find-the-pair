@@ -77,7 +77,7 @@ export class ScoreboardView {
         const recordsTable = document.getElementById('records-table');
         this.createRecord(gameRecords.maxScore, position++, recordsTable);
 
-        for (let i = 0; i < gameRecords.scores.length; i++) {
+        for (let i = 1; i < gameRecords.scores.length; i++) {
             this.createRecord(gameRecords.scores[i], position++, recordsTable);
         }
     }
