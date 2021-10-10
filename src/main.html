@@ -6,6 +6,8 @@
   <title>Web application</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="description" content="Game for improving memory by finding pairs of famous footballer images.">
+  <link rel="manifest" href="manifest.json" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
 </head>
 
 <body>
@@ -13,8 +15,13 @@
   <div id="game_process" class="game-process"></div>
   <div id="modal_window" class="modal"></div>
   <div id="game_result" class="game-result"></div>
-  <div id="game_record" class="game-record"></div>
-  <script src="bundle.js"></script>
+  <div id="game_record" class="game-record"></div>  
+  <script src="main.js"></script>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('./service_worker.js');
+    }
+  </script>
 </body>
 
 </html>

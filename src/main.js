@@ -1,9 +1,15 @@
 'use strict';
+
 import './styles.css';
+import './manifest.json';
 
 for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
     import ('./assets/images/' + i.toString() + '.jpg');
 }
+
+import './assets/icons/manifest-icon-192.maskable.png';
+import './assets/icons/manifest-icon-512.maskable.png';
+import './assets/icons/manifest-icon-512.png';
 
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/models/stopwatch.model';
