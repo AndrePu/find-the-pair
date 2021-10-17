@@ -4,7 +4,7 @@ import './styles.css';
 import './manifest.json';
 
 for (let i = 1; i <= globals.MAX_PAIRS_NUMBER; i++) {
-    import ('./assets/images/' + i.toString() + '.jpg');
+    import('./assets/images/' + i.toString() + '.jpg');
 }
 
 import './assets/icons/manifest-icon-192.maskable.png';
@@ -39,7 +39,7 @@ const scoreService = new ScoreService();
 const localizationService = new LocalizationService();
 
 const stopwatch = new Stopwatch();
-stopwatch.registerTimeListener((time) =>  document.getElementById('stopwatch').innerHTML = `${time} сек`);
+stopwatch.registerTimeListener((time) => document.getElementById('stopwatch').innerHTML = `${time} сек`);
 
 const appThemeService = new AppThemeService(
     appOptions,
@@ -73,11 +73,11 @@ const gameProcessController = new GameProcessController(
     stopwatch,
     new GamePausePopupDialogController(
         new GamePausePopupDialogView(
-        appThemeService,
-        appOptions,
-        localizationService
+            appThemeService,
+            appOptions,
+            localizationService
         )
-    ), 
+    ),
     scoreService,
     appOptions,
     appStateMediatorService
@@ -85,13 +85,13 @@ const gameProcessController = new GameProcessController(
 appStateMediatorService.gameProcessController = gameProcessController;
 
 
- const gameResultController = new GameResultController(
+const gameResultController = new GameResultController(
     new GameResultView(appThemeService, localizationService),
     appOptions,
     hotkeyService,
     scoreService,
     appStateMediatorService
- );
+);
 appStateMediatorService.gameResultController = gameResultController;
 
 const scoreboardController = new ScoreboardController(
@@ -103,3 +103,17 @@ const scoreboardController = new ScoreboardController(
 appStateMediatorService.scoreboardController = scoreboardController;
 
 setupController.initialize();
+
+// Initialize deferredPrompt for use later to show browser install prompt.
+
+window.addEventListener('beforeinstallprompt', (event) => {
+    console.log('👍', 'beforeinstallprompt', event);
+    // Stash the event so it can be triggered later.
+    window.deferredPrompt = event;
+});
+
+window.addEventListener('appinstalled', (event) => {
+    console.log('👍', 'appinstalled', event);
+    // Clear the deferredPrompt so it can be garbage collected
+    window.deferredPrompt = null;
+});
