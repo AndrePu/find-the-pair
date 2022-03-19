@@ -2,11 +2,8 @@ import * as globals from '../globals';
 import { reloadApplication } from '../utility-functions';
 
 export class AppStateMediatorService {
-    constructor(appState, appOptions, appThemeService, localizationService) {
+    constructor(appState) {
         this.appState = appState;
-        this.appOptions = appOptions;
-        this.appThemeService = appThemeService;
-        this.localizationService = localizationService;
     }
 
     set setupController(setupController) {
@@ -38,48 +35,36 @@ export class AppStateMediatorService {
         } else if (currentState == globals.appStates.GAME_RESULT && endState === globals.appStates.GAME_RECORD) {
             this.gameResultToGameRecordMediator();
         } else if (currentState === globals.appStates.GAME_RECORD && endState === globals.appStates.GAME_RESULT) {
-            this.appState.goToTheFollowingState();
+            this.appState.goToTheState(globals.appStates.GAME_RESULT);
         }
     }
    
-    setupFormToGameProcessMediator() {
-
-        this.appOptions.assignProperties(
-            this._setupController.setupViewModel.username,
-            this._setupController.setupViewModel.interfaceLanguage,
-            this._setupController.setupViewModel.fieldSize,
-            this._setupController.setupViewModel.theme,
-        );
-    
-        this.appThemeService.applyAppTheme();
-        this.localizationService.changeLanguage(this.appOptions.interfaceLanguage);
-        this.appState.goToTheFollowingState();
+    setupFormToGameProcessMediator() {       
+        this.appState.goToTheState(globals.appStates.GAME_PROCESS);
         this._gameProcessController.initialize();
         this._gameProcessController.startGame();
     }
     
     gameProcessToGameResultMediator() {
+        this.appState.goToTheState(globals.appStates.GAME_RESULT);
         if (!this.gameResultControllerInitialized) {
             this._gameResultController.initialize();
             this.gameResultControllerInitialized = true;
         }
         this._gameResultController.fillCurrentScoreInfo();
-        this.appState.goToTheFollowingState();
     }
     
     gameResultToGameProcessMediator() {    
-        this.appState.currentState = globals.appStates.GAME_PROCESS;
-        document.getElementById(globals.appStates.GAME_RESULT).style.display = globals.DOMElementStyle.display.NONE;
-        document.getElementById(globals.appStates.GAME_PROCESS).style.display = globals.DOMElementStyle.display.BLOCK;
+        this.appState.goToTheState(globals.appStates.GAME_PROCESS);
         this._gameProcessController.restartGame();
     }
     
     gameResultToGameRecordMediator() {    
+        this.appState.goToTheState(globals.appStates.GAME_RECORD);
         if (!this.scoreboardControllerInitialized) {
             this._scoreboardController.initialize();
             this.scoreboardControllerInitialized = true;
         }
-        this.appState.goToTheFollowingState();
         this._scoreboardController.showScoreboard();
     }
 

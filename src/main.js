@@ -46,18 +46,16 @@ const appThemeService = new AppThemeService(
     cardStyleOptions
 );
 
-const appStateMediatorService = new AppStateMediatorService(
-    appState,
-    appOptions,
-    appThemeService,
-    localizationService
-);
+const appStateMediatorService = new AppStateMediatorService(appState);
 
 const setupController = new SetupController(
     new SetupViewModel(),
     new SetupView(localizationService),
     hotkeyService,
-    appStateMediatorService
+    appStateMediatorService,
+    appOptions,
+    appThemeService,
+    localizationService
 );
 appStateMediatorService.setupController = setupController;
 
