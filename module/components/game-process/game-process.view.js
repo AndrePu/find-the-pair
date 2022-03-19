@@ -22,12 +22,14 @@ export class GameProcessView {
     }
 
     render(pauseGameFunc, applyThemeForCards, stopwatch) {
+        const pauseButtonName = 'pause_button';
+
         document.getElementById('game_process').innerHTML = gameProcessHtmlTemplate;
-        document.getElementById('pause_button').onclick = pauseGameFunc.bind(this);
-        this.appThemeService.registerButtons(['pause_button']); 
+        document.getElementById(pauseButtonName).onclick = pauseGameFunc.bind(this);
+        this.appThemeService.registerButtons([pauseButtonName]); 
 
         this.localizationService.registerHtmlElements([
-            new LanguageElement('pause_button', 'PAUSE_BUTTON', this.ENTRY_NAME),
+            new LanguageElement(pauseButtonName, 'PAUSE_BUTTON', this.ENTRY_NAME),
             new LanguageElement('time_header_name', 'TIME_HEADER_NAME', this.ENTRY_NAME),
             new LanguageElement('attempts_header_name', 'ATTEMPTS_HEADER_NAME', this.ENTRY_NAME),
         ]);

@@ -14,10 +14,12 @@ export class SetupView {
     }
 
     render(callbackFunction) {
+        const startButtonName = 'start_button';
+
         this.callbackFunction = callbackFunction;
         this.setupPageContainer.innerHTML = setupFormHtmlTemplate;    
         
-        const startButton = document.getElementById('start_button');
+        const startButton = document.getElementById(startButtonName);
         startButton.onclick = this.startGame.bind(this);
 
         const warningMessageElement = document.getElementById('error_label');
@@ -41,7 +43,7 @@ export class SetupView {
         );
 
         this.localizationService.registerHtmlElements([
-            new LanguageElement('start_button', 'START_BUTTON', this.ENTRY_NAME),
+            new LanguageElement(startButtonName, 'START_BUTTON', this.ENTRY_NAME),
             new LanguageElement('game_name_header', 'GAME_NAME_HEADER', this.ENTRY_NAME),
             new LanguageElement('name_input_header', 'NAME_INPUT_HEADER', this.ENTRY_NAME),
             new LanguageElement('language_input_header', 'LANGUAGE_INPUT_HEADER', this.ENTRY_NAME),

@@ -10,27 +10,31 @@ export class GameResultView {
     }
 
     render(onRestartButtonClick, onRecordsButtonClick, reloadApplication) {
+        const restartButtonName = 'restart_button';
+        const recordsButtonName = 'records_button';
+        const menuButtonName = 'menu_button';
+
         this.gameResultContainer.innerHTML = gameResultHtmlTemplate;
 
-        const restartButton = document.getElementById('restart_button');
+        const restartButton = document.getElementById(restartButtonName);
         restartButton.onclick = onRestartButtonClick;
             
-        const recordsButton = document.getElementById('records_button');
+        const recordsButton = document.getElementById(recordsButtonName);
         recordsButton.onclick = onRecordsButtonClick;
 
-        const menuButton = document.getElementById('menu_button');
+        const menuButton = document.getElementById(menuButtonName);
         menuButton.onclick = reloadApplication;
 
         this.appThemeService.registerButtons([
-            'restart_button',
-            'records_button',
-            'menu_button'
+            restartButtonName,
+            recordsButtonName,
+            menuButtonName
         ]);
 
         this.localizationService.registerHtmlElements([
-            new LanguageElement('restart_button', 'RESTART_BUTTON', this.ENTRY_NAME),
-            new LanguageElement('records_button', 'RECORDS_BUTTON', this.ENTRY_NAME),
-            new LanguageElement('menu_button', 'MENU_BUTTON', this.ENTRY_NAME),
+            new LanguageElement(restartButtonName, 'RESTART_BUTTON', this.ENTRY_NAME),
+            new LanguageElement(recordsButtonName, 'RECORDS_BUTTON', this.ENTRY_NAME),
+            new LanguageElement(menuButtonName, 'MENU_BUTTON', this.ENTRY_NAME),
             new LanguageElement('game_result_header', 'GAME_RESULT_HEADER', this.ENTRY_NAME),
             new LanguageElement('congratulations_label', 'CONGRATULATIONS_LABEL', this.ENTRY_NAME),
             new LanguageElement('current_score_label', 'CURRENT_SCORE_LABEL', this.ENTRY_NAME),

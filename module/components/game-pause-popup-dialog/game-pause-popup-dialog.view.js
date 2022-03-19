@@ -12,30 +12,38 @@ export class GamePausePopupDialogView {
         this.ENTRY_NAME = 'GAME_PAUSE_POPUP_DIALOG';
     }
 
-    render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc) {    
-        document.getElementById('modal_window').innerHTML = gamePausePopupDialogHtmlTemplate;    
-        document.getElementById('modal_restart_button').onclick = restartGameFunc;
-        document.getElementById('modal_resume_button').onclick = resumeGameFunc;
-        document.getElementById('modal_menu_button').onclick = reloadApplicationFunc;
-        document.getElementById('modal_options_button').onclick = this.openModalOptionsPage.bind(this);
-        document.getElementById('modal_optionsApply_button').onclick = this.applyOptionsFromModalWindow.bind(this);
-        document.getElementById('modal_window').style.display = globals.DOMElementStyle.display.FLEX;
+    render(restartGameFunc, resumeGameFunc, applyThemeForCardsFunc, reloadApplicationFunc) {
+        
+        const modalResumeButtonName = 'modal_resume_button';
+        const modalRestartButtonName = 'modal_restart_button';
+        const modalOptionsButtonName = 'modal_options_button';
+        const modalMenuButtonName = 'modal_menu_button';
+        const modalOptionsApplyButtonName = 'modal_optionsApply_button';
+        const modalWindowName = 'modal_window';
+
+        document.getElementById(modalWindowName).innerHTML = gamePausePopupDialogHtmlTemplate;    
+        document.getElementById(modalRestartButtonName).onclick = restartGameFunc;
+        document.getElementById(modalResumeButtonName).onclick = resumeGameFunc;
+        document.getElementById(modalMenuButtonName).onclick = reloadApplicationFunc;
+        document.getElementById(modalOptionsButtonName).onclick = this.openModalOptionsPage.bind(this);
+        document.getElementById(modalOptionsApplyButtonName).onclick = this.applyOptionsFromModalWindow.bind(this);
+        document.getElementById(modalWindowName).style.display = globals.DOMElementStyle.display.FLEX;
 
         this.appThemeService.registerButtons([
-            'modal_resume_button',
-            'modal_restart_button',
-            'modal_options_button',
-            'modal_menu_button',
-            'modal_optionsApply_button',
+            modalResumeButtonName,
+            modalRestartButtonName,
+            modalOptionsButtonName,
+            modalMenuButtonName,
+            modalOptionsApplyButtonName,
         ]);
 
         this.localizationService.registerHtmlElements(
             [
-                new LanguageElement('modal_resume_button', 'MODAL_RESUME_BUTTON', this.ENTRY_NAME),
-                new LanguageElement('modal_restart_button', 'MODAL_RESTART_BUTTON', this.ENTRY_NAME),
-                new LanguageElement('modal_options_button', 'MODAL_OPTIONS_BUTTON', this.ENTRY_NAME),
-                new LanguageElement('modal_menu_button', 'MODAL_MENU_BUTTON', this.ENTRY_NAME),
-                new LanguageElement('modal_optionsApply_button', 'MODAL_OPTIONS_APPLY_BUTTON', this.ENTRY_NAME),
+                new LanguageElement(modalResumeButtonName, 'MODAL_RESUME_BUTTON', this.ENTRY_NAME),
+                new LanguageElement(modalRestartButtonName, 'MODAL_RESTART_BUTTON', this.ENTRY_NAME),
+                new LanguageElement(modalOptionsButtonName, 'MODAL_OPTIONS_BUTTON', this.ENTRY_NAME),
+                new LanguageElement(modalMenuButtonName, 'MODAL_MENU_BUTTON', this.ENTRY_NAME),
+                new LanguageElement(modalOptionsApplyButtonName, 'MODAL_OPTIONS_APPLY_BUTTON', this.ENTRY_NAME),
                 new LanguageElement('modal_title', 'MODAL_TITLE', this.ENTRY_NAME),
                 new LanguageElement('modal_language_input_header', 'MODAL_LANGUAGE_INPUT_HEADER',this.ENTRY_NAME),
                 new LanguageElement('modal_theme_input_header', 'MODAL_THEME_INPUT_HEADER',this.ENTRY_NAME),
