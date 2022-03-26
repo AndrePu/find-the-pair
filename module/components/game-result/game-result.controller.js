@@ -1,17 +1,17 @@
 import * as globals from '../../globals';
 
 export class GameResultController {
-    constructor(gameResultView, appOptions, hotkeyService, scoreService, appStateMediatorService) {
+    constructor(gameResultView, appOptions, hotkeyService, scoreService, appStateService) {
         this.gameResultView = gameResultView;
         this.appOptions = appOptions;
         this.scoreService = scoreService;
-        this.appStateMediatorService = appStateMediatorService;
+        this.appStateService = appStateService;
         
         this.MENU_KEYDOWN = 'MENU_KEYDOWN';
         hotkeyService.registerKeydown(
             this.MENU_KEYDOWN,
             (key) => {
-                return key === globals.keys.ENTER && this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_RESULT; 
+                return key === globals.keys.ENTER && this.appStateService.getCurrentStateName() === globals.appStates.GAME_RESULT; 
             },
             this.gameResultView.reloadApplication
         );        
@@ -19,9 +19,9 @@ export class GameResultController {
 
     initialize() {
         this.gameResultView.render(
-            () => this.appStateMediatorService.changeState(globals.appStates.GAME_PROCESS),
-            () => this.appStateMediatorService.changeState(globals.appStates.GAME_RECORD),
-            () => this.appStateMediatorService.changeState(globals.appStates.GAME_SETUP),
+            () => this.appStateService.changeState(globals.appStates.GAME_PROCESS),
+            () => this.appStateService.changeState(globals.appStates.GAME_RECORD),
+            () => this.appStateService.changeState(globals.appStates.GAME_SETUP),
         );
     }
 

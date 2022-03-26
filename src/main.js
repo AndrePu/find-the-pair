@@ -13,7 +13,7 @@ import './assets/icons/manifest-icon-512.png';
 
 import * as globals from '../module/globals';
 import { Stopwatch } from '../module/models/stopwatch.model';
-import { AppOptions, AppState, CardStyleOptions } from '../module/models';
+import { AppOptions, CardStyleOptions, SetupFormState, GameProcessState, GameResultState, GameRecordState } from '../module/models';
 import { SetupView } from '../module/components/setup-form/setup.view';
 import { SetupController } from '../module/components/setup-form/setup.controller';
 import { AppThemeService } from '../module/services/app-theme.service';
@@ -28,10 +28,9 @@ import { GameResultController } from '../module/components/game-result/game-resu
 import { GameProcessController } from '../module/components/game-process/game-process.controller';
 import { GamePausePopupDialogController } from '../module/components/game-pause-popup-dialog/game-pause-popup-dialog.controller';
 import { ScoreService } from '../module/services/score.service';
-import { AppStateMediatorService } from '../module/services/app-state-mediator.service';
+import { AppStateService } from '../module/services/app-state.service';
 import { LocalizationService } from '../module/services/i18n';
 
-const appState = new AppState();
 const appOptions = new AppOptions();
 const cardStyleOptions = new CardStyleOptions();
 const hotkeyService = new HotkeyService();
@@ -46,18 +45,18 @@ const appThemeService = new AppThemeService(
     cardStyleOptions
 );
 
-const appStateMediatorService = new AppStateMediatorService(appState);
+const appStateService = new AppStateService(globals.appStates.GAME_SETUP);
 
 const setupController = new SetupController(
     new SetupViewModel(),
     new SetupView(localizationService),
     hotkeyService,
-    appStateMediatorService,
+    appStateService,
     appOptions,
     appThemeService,
     localizationService
 );
-appStateMediatorService.setupController = setupController;
+appStateService.addState(new SetupFormState(setupController));
 
 const gameProcessController = new GameProcessController(
     new GameProcessView(
@@ -78,27 +77,26 @@ const gameProcessController = new GameProcessController(
     ),
     scoreService,
     appOptions,
-    appStateMediatorService
+    appStateService
 );
-appStateMediatorService.gameProcessController = gameProcessController;
-
+appStateService.addState(new GameProcessState(gameProcessController));
 
 const gameResultController = new GameResultController(
     new GameResultView(appThemeService, localizationService),
     appOptions,
     hotkeyService,
     scoreService,
-    appStateMediatorService
+    appStateService
 );
-appStateMediatorService.gameResultController = gameResultController;
+appStateService.addState(new GameResultState(gameResultController));
 
 const scoreboardController = new ScoreboardController(
     new ScoreboardView(appThemeService, localizationService),
     appOptions,
     hotkeyService,
-    appStateMediatorService
+    appStateService
 );
-appStateMediatorService.scoreboardController = scoreboardController;
+appStateService.addState(new GameRecordState(scoreboardController));
 
 setupController.initialize();
 

@@ -1,11 +1,11 @@
 import * as globals from '../../globals';
 
 export class SetupController {
-    constructor(setupViewModel, setupView, hotkeyService, appStateMediatorService,
+    constructor(setupViewModel, setupView, hotkeyService, appStateService,
         appOptions, appThemeService, localizationService) {
         this.setupViewModel = setupViewModel;
         this.setupView = setupView;
-        this.appStateMediatorService = appStateMediatorService;
+        this.appStateService = appStateService;
         this.appOptions = appOptions;
         this.START_GAME_KEYDOWN = 'START_GAME_KEYDOWN';
         this.appThemeService = appThemeService;
@@ -13,7 +13,7 @@ export class SetupController {
 
         hotkeyService.registerKeydown(
             this.START_GAME_KEYDOWN,
-            (key) => key === globals.keys.ENTER && this.appStateMediatorService.getCurrentState() === globals.appStates.GAME_SETUP,
+            (key) => key === globals.keys.ENTER && this.appStateService.getCurrentStateName() === globals.appStates.GAME_SETUP,
             this.startGame.bind(this)
         );
     }
@@ -28,16 +28,16 @@ export class SetupController {
     }
 
     changeState() {
-        this.appThemeService.applyAppTheme();
-        this.localizationService.changeLanguage(this.appOptions.interfaceLanguage);
-
+        
         this.appOptions.assignProperties(
             this.setupViewModel.username,
             this.setupViewModel.interfaceLanguage,
             this.setupViewModel.fieldSize,
             this.setupViewModel.theme,
         );       
-
-        this.appStateMediatorService.changeState(globals.appStates.GAME_PROCESS);
+        
+        this.appThemeService.applyAppTheme();
+        this.localizationService.changeLanguage(this.appOptions.interfaceLanguage);
+        this.appStateService.changeState(globals.appStates.GAME_PROCESS);
     }
 }
