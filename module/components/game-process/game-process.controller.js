@@ -32,7 +32,7 @@ export class GameProcessController {
             this.restartGame.bind(this),
             this.resumeGame.bind(this),
             this.applyThemeForCards.bind(this),
-            () => this.appStateService.changeState(globals.appStates.GAME_SETUP)
+            this.setupMenu.bind(this)
         );
     }
 
@@ -44,6 +44,12 @@ export class GameProcessController {
         this.gamePausePopupDialogController.hideModalWindow();
         this.clearGameParameters();
         this.gameProcessView.startGame();
+    }
+
+    setupMenu() {
+        this.gamePausePopupDialogController.hideModalWindow();
+        this.clearGameParameters();
+        this.appStateService.changeState(globals.appStates.GAME_SETUP);
     }
 
     resumeGame() {

@@ -10,7 +10,7 @@ export class SetupView {
         this.setupViewModel = null;
         this.validatorService = new ValidatorService();
         this.localizationService = localizationService;
-        this.ENTRY_NAME = 'GAME_SETUP';
+        this.ENTRY_NAME = globals.appStates.GAME_SETUP.toUpperCase();
     }
 
     render(callbackFunction) {
@@ -77,8 +77,8 @@ export class SetupView {
         } else {
             this.domElements.warningMessageElement.innerText = this.localizationService.getLocalizedString(this.validatorService.lastValidationErrorMessage, this.ENTRY_NAME);
             this.domElements.warningMessageElement.style.visibility = globals.DOMElementStyle.visibility.VISIBLE;
-            this.isStartGameFuncDisabled = false;
         }
+        this.isStartGameFuncDisabled = false;
     }
 }
 

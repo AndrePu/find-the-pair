@@ -8,7 +8,7 @@ export class ScoreboardView {
         this.localizationService = localizationService;
         this.recordsTableItems = [];
         this.onReturnButtonClick = null;
-        this.ENTRY_NAME = 'GAME_RECORD';
+        this.ENTRY_NAME = globals.appStates.GAME_RECORD.toUpperCase();
     }
 
     get defaultTablinkClassName() {

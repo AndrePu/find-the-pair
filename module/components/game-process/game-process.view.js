@@ -13,7 +13,7 @@ export class GameProcessView {
         this.appThemeService = appThemeService;
         this.localizationService = localizationService;
         
-        this.ENTRY_NAME = 'GAME_PROCESS';
+        this.ENTRY_NAME = globals.appStates.GAME_PROCESS.toUpperCase();
         this.TIME_FOR_SHOWING_CARDS = 5000;
         this.TIME_FOR_FAILED_ATTEMPT = 1000;
         this.cardsLocked = false;

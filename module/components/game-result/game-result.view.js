@@ -1,12 +1,13 @@
 import gameResultHtmlTemplate from './game-result.html';
 import { LanguageElement } from '../../models/language-element.model';
+import * as globals from '../../globals';
 
 export class GameResultView {
     constructor(appThemeService, localizationService) {
         this.gameResultContainer = document.querySelector('#game_result');
         this.appThemeService = appThemeService;
         this.localizationService = localizationService;
-        this.ENTRY_NAME = 'GAME_RESULT';
+        this.ENTRY_NAME = globals.appStates.GAME_RESULT.toUpperCase();
     }
 
     render(onRestartButtonClick, onRecordsButtonClick, reloadApplication) {
