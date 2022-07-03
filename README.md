@@ -1,5 +1,8 @@
 # find-the-pair
-## How to run
 
-1) Open root folder and run command `npm install`
-2) Then run `npm run start`
+Project covers the following apects
+1) MVC
+2) PWA
+3) Service Worker
+4) Cache Web API
+5) Webpack configuration
