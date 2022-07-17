@@ -16,6 +16,7 @@ export class GameProcessView {
         this.ENTRY_NAME = globals.appStates.GAME_PROCESS.toUpperCase();
         this.TIME_FOR_SHOWING_CARDS = 5000;
         this.TIME_FOR_FAILED_ATTEMPT = 1000;
+        this.ROW_NAME = 'row';
         this.cardsLocked = false;
         this.openedRecentlyCardName = null;
         this.attempts = 0;
@@ -37,12 +38,23 @@ export class GameProcessView {
         this.applyThemeForCards = applyThemeForCards;
         this.stopwatch = stopwatch;
 
+        this.initializeGame();
+    }
+
+    initializeGame() {
         this.initializeBaseGameData();
         this.buildGameField();
         this.applyThemeForCards();
     }
 
+    clearGameField() {
+        for (let i = 1; i <= this.rows; i++) {
+                document.getElementById(`${this.ROW_NAME}${i}`).remove();
+        }
+    }
+
     initializeBaseGameData() {
+        this.fieldSize = this.appOptions.fieldSize;
         [this.rows, this.columns] = defineFieldSizes(this.appOptions.fieldSize);
         this.pairsAmount = this.rows * this.columns / 2;
         this.images = getImages(this.pairsAmount);
@@ -53,6 +65,7 @@ export class GameProcessView {
         const gameProcessBlock = document.getElementById(globals.appStates.GAME_PROCESS);
         for (let i = 1; i <= this.rows; i++) {
             let rowBlock = document.createElement('div');
+            rowBlock.id = `${this.ROW_NAME}${i}`;
             gameProcessBlock.prepend(rowBlock);
             for (let j = 1; j <= this.columns; j++) {
                 let card = document.createElement('div');
@@ -71,7 +84,12 @@ export class GameProcessView {
         }
     }
 
-    startGame() {
+    startGame() {        
+        if (this.fieldSize !== this.appOptions.fieldSize) {
+            this.clearGameField();
+            this.initializeGame();
+        }
+
         this.cardsInfo = defineCardsInfo(
             pipes.arrRandomizerPipe.transform(this.cardsNames), 
             this.images

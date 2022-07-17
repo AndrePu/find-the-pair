@@ -6,22 +6,10 @@ const addResourcesToCache = async (resources) => {
   await cache.addAll(resources);
 };
 
-const putInCache = async (request, response) => {
-  const cache = await caches.open(CACHE_NAME);
-  await cache.put(request, response);
-};
-
-const cacheFirst = async ({ request, preloadResponsePromise }) => {
+const cacheFirst = async ({ request }) => {
   const responseFromCache = await caches.match(request);
   if (responseFromCache) {
     return responseFromCache;
-  }
-
-  const preloadResponse = await preloadResponsePromise;
-  if (preloadResponse) {
-    console.info('using preload response', preloadResponse);
-    putInCache(request, preloadResponse.clone());
-    return preloadResponse;
   }
 
   try {
@@ -35,32 +23,25 @@ const cacheFirst = async ({ request, preloadResponsePromise }) => {
   }
 };
 
-const enableNavigationPreload = async () => {
-  if (self.registration.navigationPreload) {
-    await self.registration.navigationPreload.enable();
-  }
-};
-
 self.addEventListener('activate', (event) => {
   event.waitUntil(
-    enableNavigationPreload()
-      .then(() => {
-        return caches.keys().then(cacheNames => {
-          return Promise.all(
-            cacheNames.map(name => {
-              if (name !== CACHE_NAME) {
-                return caches.delete(name);
-              }
-            })
-          );
-        });
-      }));
+    caches.keys().then(cacheNames => {
+      return Promise.all(
+        cacheNames.map(name => {
+          if (name !== CACHE_NAME) {
+            return caches.delete(name);
+          }
+        })
+      );
+    })
+  );
 });
 
 self.addEventListener('install', (event) => {
   event.waitUntil((async () => {
     const toCache = [
-      '/main.js'
+      '/main.js',
+      '/'
     ];
 
     for (let i = 1; i <= 20; i++) {
@@ -74,8 +55,7 @@ self.addEventListener('install', (event) => {
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     cacheFirst({
-      request: event.request,
-      preloadResponsePromise: event.preloadResponse
+      request: event.request
     })
   );
 });

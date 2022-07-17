@@ -13,6 +13,7 @@ export class BaseState {
     changeState() {
         if (!this.isStateControllerInitialized) {
             this.initialize();
+            this.isStateControllerInitialized = true; 
         }
         this.perform(); // should be overriden
     }

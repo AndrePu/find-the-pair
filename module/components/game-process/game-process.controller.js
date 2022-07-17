@@ -84,6 +84,7 @@ export class GameProcessController {
 
     endGame() {
         this.saveCurrentScore();
+        this.clearGameParameters();
         this.appStateService.changeState(globals.appStates.GAME_RESULT);
     }
 
